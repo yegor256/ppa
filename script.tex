@@ -1,0 +1,96 @@
+% (The MIT License)
+%
+% Copyright (c) 2022 Yegor Bugayenko
+%
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the 'Software'), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
+
+\documentclass[sigsoft,12pt]{acmart}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{bm}
+\usepackage{multicol}
+\usepackage{mathtools}
+\usepackage{ffcode}
+\usepackage{soul}
+\renewcommand\emph[1]{\ul{#1}}
+\begin{document}
+
+\section{Formal Grammar}
+
+\subsection{Notation}
+
+Assume, we want to create a new programming language (very similar to Basic),
+which will allow us to write programs that look like this:
+
+\begin{ffcode}
+10 PRINT "What is your name?"
+20 INPUT X
+30 PRINT "Hello,", X
+\end{ffcode}
+
+A \emph{grammar} $G$, according to Noam Chomsky (1950s), is a tuple $\langle N, T, P, S\rangle$, where:
+\begin{itemize}
+  \item $N = \{ P_\texttt{rogram}, I_\texttt{nteger},
+    N_\texttt{ame}, T_\texttt{ext}, L_\texttt{ine}, \dots \}$ (\emph{non-terminals} or \emph{variables})
+  \item $T = \{ \texttt{10}, \texttt{20},
+    \texttt{PRINT}, \texttt{X}, \texttt{,}, \texttt{"Hello"}, \dots \}$ (\emph{terminals} or \emph{alphabet})
+  \item $P = \{ \dots \}$ (\emph{production rules})
+  \item $S \in N$ (\emph{start symbol})
+\end{itemize}
+
+Sometimes it may be $\langle V, \Sigma, R, S\rangle$, but it's not important.
+
+A \emph{language} that can be built by $G$ is denoted as $\bm{L}(G)$.
+
+A \emph{production rule} specifies a replacement of its \emph{left-hand side} with its \emph{right-hand side}, for example:
+\begin{equation*}
+\begin{split}
+P_\texttt{rogram} &\to P_\texttt{rogram} \; L_\texttt{ine} \\
+P_\texttt{rogram} &\to \epsilon \\
+L_\texttt{ine} &\to I_\texttt{nteger} \; C_\texttt{ommand} \; T_\texttt{ail} \\
+T_\texttt{ail} &\to T_\texttt{ail} \; A_\texttt{rgument} \\
+T_\texttt{ail} &\to \epsilon \\
+I_\texttt{nteger} &\to \texttt{10} \\
+I_\texttt{nteger} &\to \texttt{20} \\
+I_\texttt{nteger} &\to \dots \\
+\end{split}
+\end{equation*}
+
+Formally, a production rule is (using \emph{Kleene star}):
+\begin{equation*}
+(T \cup N)^* N (T \cup N)^* \to (T \cup N)^*
+\end{equation*}
+
+Each left-hand side must contain at least one nonterminal symbol.
+
+Derivation process may be desribed using $\xRightarrow[*]{}$ notation:
+\begin{equation*}
+\begin{split}
+P &\xRightarrow[1]{} \bm{P} \; \bm{L} \\
+  &\xRightarrow[2]{} P \; \bm{I} \; \bm{C} \; \bm{T} \\
+  &\xRightarrow[3]{} P \; \textbf{\texttt{30}} \; C \; T \\
+  &\xRightarrow[4]{} P \; \texttt{30} \; \textbf{\texttt{PRINT}} \; T \\
+  &\xRightarrow[5]{} \bm{P} \; \bm{L} \; \texttt{30} \; \texttt{PRINT} \; T \\
+  &\xRightarrow[6]{} \dots \\
+\end{split}
+\end{equation*}
+
+
+\end{document}

@@ -1,0 +1,296 @@
+% (The MIT License)
+%
+% Copyright (c) 2022 Yegor Bugayenko
+%
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the 'Software'), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
+
+\documentclass[nobrand,anonymous,nodate,nosecurity]{huawei}
+\usepackage{enumerate}
+\usepackage{multicol}
+\usepackage{href-ul}
+\usepackage{ffcode}
+\begin{document}
+
+{\sffamily{\bfseries\Large Practical Program Analysis}\\
+Series of lectures by \href{https://www.yegor256.com}{Yegor Bugayenko}
+% to students of \href{https://innopolis.university/en/}{Innopolis University} in 2021,\\
+% and \href{https://www.youtube.com/playlist?list=PLaIsQH4uc08woJKRAA7mmjs9fU0jeKjjM}{video recorded}}
+
+% The entire set of slide decks is in \href{https://github.com/yegor256/ssd16}{yegor256/ssd16} GitHub repository.
+
+\begin{abstract}
+The course is a high-level introduction to program analysis with a
+strong emphasis on its practical implementation in the design of programming languages
+and code analyzers. Students may listen to this
+course if they plan to develop their own programming languages,
+compilers, IDEs, static and dynamic analyzers, code refactoring, generating and optimization tools.
+The course combines theoretical study with the development of
+instruments that analyze source code and automatically modifies it.
+\end{abstract}
+
+% \section*{Introduction}
+
+\textbf{What is the goal?}\\
+The primary objective of the course is to demonstrate
+how theoretical knowledge of program analysis may be applied to
+the design of software tools.
+
+\textbf{Who is the teacher?}\\
+I'm developing software for more than 30 years, being a hands-on programmer
+(see my GitHub account: \href{https://github.com/yegor256}{@yegor256})
+and a manager of other programmers. At the moment I'm a director
+of an R\&D laboratory in Huawei. Our primary research focus is
+software quality problems. You may find some lectures I've presented
+at some software conferences on
+\href{https://www.youtube.com/channel/UCr9qCdqXLm2SU0BIs6d_68Q}{my YouTube channel}.
+I also published \href{https://www.yegor256.com/books.html}{a few books}
+and wrote \href{https://www.yegor256.com/contents.html}{a blog} about software engineering
+and object-oriented programming.
+I previously tought two courses in
+Innopolis University (Kazan, Russia)
+and HSE University (Moscow, Russia):
+\href{https://github.com/yegor256/ssd16}{Software Systems Design}
+and
+\href{https://github.com/yegor256/eqsp}{Ensuring Quality in Software Projects}
+(all videos are available).
+
+\textbf{Why this course?}\\
+The quality of software code that most of us programmers write is way below
+the expectations of our customers. Two main reasons for that
+is the lack of understanding of how programming languages are designed
+internally and the absences of connection between theoretical knowledge
+about language design and the actual software we use every day to
+write code: IDEs, compilers, code analyzers and modifiers. This course
+may help build the bridge between theory and practice.
+
+\textbf{What's the methodology?}\\
+The course is organized in pairs of lectures. The first lecture in a pair
+is an introduction of a theory, while the second lecture is a demonstration
+of how the theory may be applied to the development of a software tool. During
+the course students will participate in the development of an automated
+code optimization tool for one of popular programming languages, like Java or C++.
+
+\newpage
+\section*{Course Structure}
+
+Prerequisites to the course (it is expected that a student knows this):
+
+\begin{itemize}
+\item How to write code
+\item How to design software
+\end{itemize}
+
+After the course a student \emph{hopefully} will understand the basics of:
+
+\begin{itemize}
+\item Formal Grammar
+\item Syntax Analysis
+\item Abstract Syntax Tree
+\item Formal Semantics
+\item Abstract Machines
+\item Program Analysis
+\item Data Flow Analysis
+\item Symbolic Execution
+\item Model Checking
+% %
+% \item Type Theory
+% \item $\lambda$-calculus
+% \item Temporal Logic
+\end{itemize}
+
+Also, a student will be able to develop:
+
+\begin{itemize}
+\item A Programming Language
+\item A Compiler
+\item A Static Analyzer
+\item A Code Refactoring Tool
+\end{itemize}
+
+\newpage
+\section*{Lectures}
+
+The following topics are discussed:
+
+\newlist{lectures}{enumerate}{10}
+\setlist[lectures]{label*=\arabic*.}
+\begin{lectures}
+\item Formal Grammar
+	\begin{itemize}
+	\item Grammar as a 4-tuple $\langle N, T, P, S \rangle$, by Noam Chomsky
+	\item Terminals and Non-Terminals
+	\item Production Rules
+	\item Parse Tree
+	\item Ambiguity of Grammar
+	\item Chomsky's Four Types of Grammars
+	\item Regular Grammar
+	\item Context Free Grammar (CFG)
+	\item Linear Grammars
+	\item Precedence and Associativity
+	\item Recursive Rules
+	\item Leftmost and Rightmost Derivation
+	\item Non-deterministic CFG
+	\item Left Factoring
+	\end{itemize}
+\item Syntax Analysis
+	\begin{itemize}
+	\item Extended Backus-Naur Form
+	\item Lexical Analysis (Grammar + Lexer)
+	\item Tokenization
+	\item Syntactic Analysis (Parsing)
+	\item Top-down (LL) and Bottom-up (LR) Parsing
+	\item Flex and Bison
+	\item ANTLR
+	\item Off-side Rule
+	\end{itemize}
+\item Abstract Syntax Tree
+	\begin{itemize}
+	\item Contextual Analysis
+	\item Semantic Analysis
+	\item Intermediate Language
+	\item Control Flow Graph
+	\item AST in XML
+	\end{itemize}
+\item Formal Semantics
+	\begin{itemize}
+	\item Inference Rules
+	\item Natural Semantics
+	\item Structural Operational Semantics
+	\item Reduction Semantics
+	\item Axiomatic Semantics
+	\item Denotational Semantics
+	\item $\lambda$-calculus
+	\end{itemize}
+\item Abstract Machines
+	\begin{itemize}
+	\item Turing Machine
+	\item Finite-State Machine
+	\item SECD Machine
+	\item Graph-based VM
+	\end{itemize}
+\item Program Analysis
+	\begin{itemize}
+	\item Rice's Theorem
+	\item Static vs Dynamic Analysis
+	\item Precision and Recall
+	\item Soundness and Completeness
+	\item Abstract Interpretation
+	\item Approximation
+	\item Lattices
+	\end{itemize}
+\item Data Flow Analysis
+	\begin{itemize}
+	\item Basics Blocks, Transfer Function, and Join Operation
+	\item Iterative Round-Robin Algorithm
+	\item Work List Approach
+	\item Forward and Backward Analysis
+	\item Live Variable Analysis
+	\item Definite Assignment Analysis
+	\item Available Expressions Analysis
+	\item Taint Checking
+	\end{itemize}
+\item Symbolic Execution
+	\begin{itemize}
+	\item Constraint Solvers (SAT/SMT)
+	\item Itra- vs Inter-procedural Analysis
+	\item Concolic Execution
+	\item Path Explosion
+	\item KLEE
+	\end{itemize}
+\item Model Checking
+	\begin{itemize}
+	\item Verification vs. Validation
+	\item Program Graph
+	\item Transformation System
+	\item SPIN
+	\end{itemize}
+\end{lectures}
+
+% \newpage
+% \section*{Laboratory Classes}
+
+% A few following laboratory classes may support the course, where students
+% will be asked to solve some of these tasks (the most complex are at the bottom):
+
+% \begin{enumerate}
+% \end{enumerate}
+
+% There could be other tasks too.
+
+\newpage
+\section*{Grading}
+
+Students may form groups of up to three people. Each group will present
+their own public GitHub repository with a software module inside, which
+may be one of the following:
+
+\begin{itemize}
+	\item Compiler,
+	\item Static analyzer,
+	\item Transpiler,
+	\item Code refactoring tool.
+\end{itemize}
+
+Higher grades will be given for (in this order):
+
+\begin{itemize}
+	\item Higher formalism of documentation,
+	\item Higher complexity,
+	and
+	\item Higher test coverage,
+\end{itemize}
+
+Attendance will be tracked at the lectures.
+If you attend more than 75\% of all lectures, you will not get less than ``C''.
+
+At the laboratory classes each group will have to complete three
+home works and defend them verbally on-site.
+A completion of less than two will give everybody in the group a negative point,
+a completion of three --- will give a positive point; the point will be added
+to the grade given by the lecturer.
+
+A retake exam is possible, following exactly the same procedure.
+However, the highest mark possible at the retake is ``C.''
+
+\newpage
+\section*{Learning Material}
+
+The following books are highly recommended to read (in no particular order):
+
+\begin{multicols}{2}\small\raggedright
+{Robert Harper}, \emph{Practical Foundations for Programming Languages}\\[3pt]
+{Xavier Rival et al.}, \emph{Introduction to Static Analysis: An Abstract Interpretation Perspective}\\[3pt]
+{Shelby Parrish}, \emph{Introduction to Formal Grammar}\\[3pt]
+{Terence Parr}, \emph{The Definitive ANTLR 4 Reference}\\[3pt]
+{Benjamin C. Pierce}, \emph{Programming Language Foundations}\\[3pt]
+{Glynn Winskel}, \emph{Formal Semantics of Programming Languages}\\[3pt]
+{Flemming Nielson et al.}, \emph{Principles of Program Analysis}\\[3pt]
+{Anders Møller et al.}, \emph{Static Program Analysis}\\[3pt]
+{Patrick Cousot}, \emph{Principles of Abstract Interpretation}\\[3pt]
+{Uday Khedker et al.}, \emph{Data Flow Analysis: Theory and Practice}
+{Christel Baier}, \emph{Principles of Model Checking}
+\end{multicols}
+
+I would also recommend you to watch YouTube lectures of
+	\href{https://www.youtube.com/@MichaelPradel}{Michael Padel}.
+	\href{https://www.youtube.com/@nesoacademy}{@nesoacademy},
+	and
+	\href{https://www.youtube.com/@htz4523}{Joost-Pieter Katoen}.
+
+\end{document}

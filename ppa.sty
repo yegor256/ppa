@@ -27,12 +27,24 @@
 \RequirePackage[utf8]{inputenc}
 \RequirePackage[dry,increment]{crumbs}
 \RequirePackage[static]{clicks}
-\RequirePackage[template,scheme=dark]{ppt-slides}
-\RequirePackage{ffcode}
+\RequirePackage[template,scheme=light]{ppt-slides}
+\RequirePackage[nocn]{ffcode}
+\RequirePackage{bm}
 \RequirePackage{amsmath}
 \RequirePackage{graphicx}
   \graphicspath{{../images/}}
-\usetikzlibrary{calc}
+
+\RequirePackage{mathtools}
+\RequirePackage{to-be-determined}
+\RequirePackage{tikz}
+  \usetikzlibrary{positioning,calc,arrows.meta}
+\RequirePackage{soul}
+\renewcommand\emph[1]{\ul{#1}}
+\tikzstyle{graph} = [
+    every node/.style={draw=black,circle,minimum width=2.2em},
+    every edge/.append style={draw=black,-{Latex[length=2.5mm,width=2mm]},every node/.style={above}},
+    every loop/.append style={draw=black,-{Latex[length=2.5mm,width=2mm]},every node/.style={above}},
+]
 
 \newcommand\br{\newline}
 
@@ -47,7 +59,7 @@
 \newcommand\innoTitlePage[1]{%
   \pptTitle{\thetitle}{\thesubtitle}\par
   {\scshape Yegor Bugayenko}\par
-  Lecture \##1 out of 16 \br
+  Lecture \##1 out of 10 \br
   90 minutes\par
   \innoDisclaimer{}
 }

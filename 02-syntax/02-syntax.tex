@@ -1,0 +1,231 @@
+% (The MIT License)
+%
+% Copyright (c) 2022-2023 Yegor Bugayenko
+%
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the 'Software'), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
+
+\documentclass{article}
+\usepackage{../ppa}
+\newcommand*\thetitle{Syntax Analysis}
+\newcommand*\thesubtitle{DFA, Flex, Bison, ANTLR}
+\begin{document}
+
+\plush{\innoTitlePage{2}}
+
+\pptToc
+
+\plush{\pptChapter{Extended Backus-Naur Form}}
+
+In 1959, John Backus proposed a metalanguage to describe the syntax of IAL, known today as ALGOL 58. Further development of ALGOL led to ALGOL 60. In the committee's 1963 report, Peter Naur called Backus's notation Backus normal form. Donald Knuth argued that BNF should rather be read as Backus–Naur form, as it is ``not a normal form in the conventional sense.''
+
+EBNF is now the way to specify formal grammars. Proposed by Niklaus Wirth in 1977 as an alternative to BNF.
+
+The International Organization for Standardization adopted an EBNF Standard, ISO/IEC 14977, in 1996. However, there are many notations of EBNF.
+\plush{}
+
+Our language EBNF:
+\begin{ffcode}
+program = line { eol line };
+line = number command arguments;
+arguments = [ argument { "," argument } ];
+number = digit { digit };
+digit = "0" |$\vert$| "1" |$\vert$| "2" ... |$\vert$| "9";
+eol = "\n";
+\end{ffcode}
+\plush{}
+
+\plush{\pptChapter{Lexical Analysis}}
+
+Lexical analyzer (\emph{lexer} or \emph{scanner}) takes input language and produces \emph{tokens} (which then can be parsed into parse tree by a parser).
+
+\emph{Lexemes} are said to be a sequence of characters in a token.
+\plush{}
+
+Lexers are implemented as DFAs, which use regular expressions. For example, this is the language:
+\begin{ffcode}
+10 PRINT
+20 RENDER
+30 EXIT
+\end{ffcode}
+\plush{}
+
+The DFA for this language (pattern matching rules on the edges): \\
+\begin{tikzpicture}[graph]
+\node (s) {$S$};
+% \path ($ (s)-(10cm:0cm) $) edge (s);
+\node[double,right=1.5cm of s] (s1) {1};
+\path (s) edge node {\texttt{1-9}} (s1);
+\path (s1) edge[loop above] node {\texttt{0-9}} (s1);
+\node[right=1.5cm of s1] (s2) {2};
+\path (s1) edge node {\texttt{space}} (s2);
+\node[double,right=1.5cm of s2] (s3) {3};
+\path (s2) edge node {\texttt{A-Z}} (s3);
+\path (s3) edge[loop above] node {\texttt{A-Z}} (s3);
+\path (s3) edge[bend left=30] node {\texttt{EOL}} (s);
+\node[draw=none,below=1.5cm of s1] (integer) {$I_\texttt{nteger}$};
+\path[dashed] (s1) edge (integer);
+\node[draw=none,below=1.5cm of s3] (command) {$C_\texttt{ommand}$};
+\path[dashed] (s3) edge (command);
+\end{tikzpicture}
+
+The stream of tokens (with lexems inside them) produced:
+\begin{ffcode}
+Integer("10"), Command("PRINT"), Integer("20"),
+Command("RENDER"), Integer("30"), Command("EXIT").
+\end{ffcode}
+\plush{}
+
+Some lexems (like spaces or EOLs) are ignored and do not become tokens. They are \emph{non-token} elements. However, they could become tokens, like in this DFA:\\
+\begin{tikzpicture}[graph]
+\node[double] (s) {$S$};
+\node[double,above right=1cm and 4cm of s] (s1) {1};
+\path (s) edge[bend left=45] node {\texttt{1-9}} (s1);
+\path (s1) edge[loop above] node {\texttt{0-9}} (s1);
+\node[double,right=9cm of s] (s2) {2};
+\path (s2) edge[loop right] node {\texttt{space}} (s2);
+\path (s1) edge[bend left=45] node {\texttt{space}} (s2);
+\path (s2) edge node {\texttt{1-9}} (s1);
+\node[double,below right=1cm and 3cm of s] (s3) {3};
+\path (s3) edge[bend right=45] node {\texttt{space}} (s2);
+\path (s2) edge node {\texttt{A-Z}} (s3);
+\path (s3) edge[loop below] node {\texttt{A-Z}} (s3);
+\path (s1) edge[bend left=30] node {\texttt{EOL}} (s);
+\path (s2) edge[bend right=10] node {\texttt{EOL}} (s);
+\path (s3) edge[bend left=30] node {\texttt{EOL}} (s);
+\path (s) edge[loop left] node {\texttt{EOL}} (s);
+\path (s) edge[bend right=10] node {\texttt{space}} (s2);
+\path (s) edge[bend left=30] node {\texttt{A-Z}} (s3);
+\end{tikzpicture}
+
+Q: What would be the stream of tokens for \texttt{"10\textvisiblespace{}INPUT\textbackslash{}n\textbackslash{}n\textvisiblespace{}\textvisiblespace{}\textvisiblespace{}20"}?
+\plush{}
+
+Q: How many tokens in this C-language program?:
+\begin{ffcode}
+printf("age=%d", &i);
+\end{ffcode}
+\plush{}
+
+\plush{\pptChapter{Syntactic Analysis}}
+
+While \emph{lemmatization} focuses purely on feature extraction and data cleaning, \emph{syntactic analysis} analyzes the relationship between words and the grammatical structure of sentences.
+\plush{}
+
+\pptSection[LL/LR]{Top-Down and Bottom-Up Parsing}
+
+\emph{Top-down parsing} builds the parse tree from the top (start
+symbol) down; most top-down methods are LL.
+\emph{Bottom-up parsing} builds the parse tree from the leaves
+(terminal symbols) up; most methods are LR.
+\plush{}
+
+LL means \textbf{L}eft-to-right + \textbf{L}eftmost derivation.
+
+LR means \textbf{L}eft-to-right + \textbf{R}ightmost derivation.
+\plush{}
+
+\pptSection[Predictive]{Predictive Parsing}
+
+A \emph{recursive descent parser} is the one the checks every rule before making a decision which one is right.
+
+\emph{Predictive parsing} is possible only for the class of \(LL(k)\) grammars, which are the CFGs for which there exists some positive integer \(k\) that allows a parser to decide which production rule to use by examining only the next \(k\) tokens of input.
+\plush{}
+
+\pptSection[CC]{Flex and Bison}
+
+These tools are called \emph{compiler-compilers} (originally \texttt{lex} and \texttt{yacc}) or parser generators.
+
+Make this simple Flex program in \texttt{foo.x}:
+\begin{ffcode}
+%option noyywrap
+DIGIT [0-9]
+LETTER [a-z]
+%%
+{DIGIT}+ { printf( "int: %s\n", yytext ); }
+{LETTER}+ { printf( "word: %s\n", yytext ); }
+%%
+int main(int argc, char** argv) { yylex(); }
+\end{ffcode}
+Then, compile it with Flex and then with Gcc:
+\begin{ffcode}
+$ flex foo.x
+$ gcc lex.yy.c
+$ ./a.out
+\end{ffcode}
+\plush{}
+
+Each time the program needs a token, it calls \texttt{yylex()}, which reads a little input and returns the token. When it needs another token, it calls \texttt{yylex()} again. The scanner acts as a \emph{coroutine}; that is, each time it returns, it remembers where it was, and on the next call it picks up where it left off.
+\plush{}
+
+The \emph{action code} is what stays in the brackets after the \emph{pattern}. If action code returns, scanning resumes on the next call to \texttt{yylex()}; if it doesn't return, scanning resumes immediately.
+\plush{}
+
+Lexical errors may be \emph{handled} and the lexer may \emph{recover} from some of them: we don't want the lexer to stop at the first error. See how Flex recovers.
+\plush{}
+
+This is Bison code in \texttt{foo.y}:
+\begin{ffcode}
+%token WORD
+%token INT
+%%
+input: date |$\vert$| sentence;
+date:
+  INT INT INT
+  { printf("date!\n"); };;
+sentence:
+  |$\vert$|
+  sentence WORD
+  { printf("sentence!\n"); };
+%%
+int main(int argc, char** argv) {
+  yyparse();
+}
+void yyerror(char *s) {
+  fprintf(stderr, "error: %s\n", s);
+}
+\end{ffcode}
+\plush{}
+
+We compile them together as such:
+\begin{ffcode}
+bison -d foo.y
+flex foo.x
+gcc foo.tab.c lex.yy.c
+\end{ffcode}
+
+Bison generates \texttt{foo.tab.h} file, which we must \texttt{\#include} into \texttt{foo.x}.
+\plush{}
+
+\pptSection{ANTLR}
+
+ANTLR breaks the stream into tokens (capitalized names) and non-terminals:
+\begin{ffcode}
+grammar basic;
+program: line+;
+line: order command tail;
+order: INTEGER;
+command: NAME;
+tail: argument*;
+INTEGER: [1-9][0-9]*;
+NAME: [A-Z]+;
+SPACE: (' ')+ { skip(); };
+\end{ffcode}
+\plush{}
+
+\end{document}

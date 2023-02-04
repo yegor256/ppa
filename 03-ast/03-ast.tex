@@ -1,0 +1,113 @@
+% (The MIT License)
+%
+% Copyright (c) 2022-2023 Yegor Bugayenko
+%
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the 'Software'), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
+
+\documentclass{article}
+\usepackage{../ppa}
+\newcommand*\thetitle{Abstract Syntax Tree}
+\newcommand*\thesubtitle{...}
+\begin{document}
+
+\plush{\innoTitlePage{3}}
+
+\pptToc
+
+\plush{\pptChapter[Trees]{Concrete vs. Abstract}}
+
+The \emph{concrete syntax} of a programming language is defined by a context free grammar (CFG).
+The \emph{abstract syntax} of an implementation is the set of trees used to represent programs in the implementation.
+\plush{}
+
+Simple program:
+\begin{ffcode}
+PRINT "Hi," + name;
+EXIT;
+\end{ffcode}
+
+\begin{multicols}{2}
+Concrete Syntax Tree:
+
+\scalebox{.6}{\begin{tikzpicture}[graph]
+\node (p) {$P$};
+\node[below left=1cm and 4cm of p] (l1) {$L$}; \path (p) edge (l1);
+\node[below left=1cm and 2cm of l1] (print) {$C$}; \path (l1) edge (print);
+\node[terminal,below=1cm of print] (print-t) {\texttt{PRINT}}; \path (print) edge (print-t);
+\node[below left=1cm and 0cm of l1] (hello) {$S$}; \path (l1) edge (hello);
+\node[terminal,below=3cm of hello] (hello-t) {\texttt{"Hi,"}}; \path (hello) edge (hello-t);
+\node[below right=1cm and 0cm of l1] (plus) {$O$}; \path (l1) edge (plus);
+\node[terminal,below=1cm of plus] (plus-t) {\texttt{+}}; \path (plus) edge (plus-t);
+\node[below right=1cm and 2cm of l1] (name) {$V$}; \path (l1) edge (name);
+\node[terminal,below=3cm of name] (name-t) {\texttt{name}}; \path (name) edge (name-t);
+\node[terminal,below right=1cm and 5cm of l1] (semi1) {\texttt{";"}}; \path (l1) edge (semi1);
+%
+\node[below right=1cm and 6cm of p] (l2) {$L$}; \path (p) edge (l2);
+\node[below left=1cm of l2] (exit) {$C$}; \path (l2) edge (exit);
+\node[terminal,below=1cm of exit] (exit-t) {\texttt{EXIT}}; \path (exit) edge (exit-t);
+\node[terminal,below right=1cm of l2] (semi2) {\texttt{";"}}; \path (l2) edge (semi2);
+\end{tikzpicture}}
+\par\columnbreak\par
+Abstract Syntax Tree:
+
+\scalebox{.75}{\begin{tikzpicture}[graph]
+\node[terminal] (p) {program};
+\node[terminal,below left=1cm of p] (print) {print}; \path (p) edge (print);
+\node[terminal,below right=1cm of p] (exit) {exit}; \path (p) edge (exit);
+\node[terminal,below=1cm of print] (plus) {plus}; \path (print) edge (plus);
+\node[terminal,below left=1cm of plus] (a1) {"Hi,"}; \path (plus) edge (a1);
+\node[terminal,below right=1cm of plus] (a2) {name}; \path (plus) edge (a2);
+\end{tikzpicture}}
+\end{multicols}
+\plush{}
+
+\plush{\pptChapter[Contextual]{Contextual Analysis}}
+
+\pptSection{Identification}
+
+\begin{multicols}{2}
+{\ttfamily
+var x; \\
+loop \{ var x; x++; \}; \\
+print x;}
+\par\columnbreak\par
+\begin{tikzpicture}[graph]
+\node[terminal] (p) {program};
+\node[terminal,below left=1cm of p] (var1) {var x}; \path (p) edge (var1);
+\node[terminal,below=1.2cm of p] (loop) {loop}; \path (p) edge (loop);
+\node[terminal,below right=1cm and 3cm of p] (print) {print}; \path (p) edge (print);
+\node[terminal,below=1cm of print] (x2) {x}; \path (print) edge (x2);
+\node[terminal,below left=1cm of loop] (var2) {var x}; \path (loop) edge (var2);
+\node[terminal,below right=1cm of loop] (plus) {++}; \path (loop) edge (plus);
+\node[terminal,below=1cm of plus] (x1) {x}; \path (plus) edge (x1);
+\end{tikzpicture}
+\end{multicols}
+
+Somehow we must \emph{link} different $x$ to different places, where they are \emph{declared},
+maybe with the help of "\emph{ID table}," or by attaching attributes to AST nodes, or both.
+\plush{}
+
+\pptSection{Type Checking}
+
+
+
+\pptSection{Type Inference}
+
+
+\end{document}

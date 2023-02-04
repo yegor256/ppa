@@ -1,0 +1,77 @@
+% (The MIT License)
+%
+% Copyright (c) 2022-2023 Yegor Bugayenko
+%
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the 'Software'), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
+
+\documentclass{article}
+\usepackage{../ppa}
+\newcommand*\thetitle{Formal Semantics}
+\newcommand*\thesubtitle{Rules, SOS, Natural, $\lambda$-calculus}
+\begin{document}
+
+\plush{\innoTitlePage{4}}
+
+\pptToc
+
+\plush{\pptChapter{Operational vs Denotational}}
+
+The \emph{denotational semantics} assign to every expression the number denoted by that expression:
+
+\begin{equation*}
+\Downarrow \subseteq \mathcal{A} \times \mathcal{D}
+x^n \leadsto 1 \quad\text{if}\; n = 0
+\end{equation*}
+
+The \emph{operational semantics} describe the computation steps taken in order to evaluate the expression to \emph{normal form}:
+
+\begin{gather*}
+\leadsto \subseteq \mathcal{A} \times \mathcal{A} \\
+x^n \leadsto x \times x \times x \quad\text{if}\; x = 3
+\end{gather*}
+
+The operational semantics is the specification of an \emph{interpreter} for the programming language whereas the denotational semantics tries to capture the \emph{mathematically essence} of a program, abstracting away from computational details.
+
+\pptSection{Rewrite Rules}
+
+\pptSection{Example of Natural Semantics}
+
+\begin{equation*}
+\frac
+  {E }
+  {}
+\end{equation*}
+
+\plush{}
+
+\pptSection{Literature}
+
+Christopher Strachey (2000),
+\emph{Fundamental Concepts in Programming Languages}
+
+Alexander Kurz (2022),
+\href{https://hackmd.io/@alexhkurz/Hkf6BTL6P}{\emph{Operational and Denotational Semantics}}
+
+Michael Pradel (2021),
+\href{https://www.youtube.com/watch?v=jsBHd3-04oA}{Lectures on ``Operational Semantics''}
+
+Gordon Plotkin (1981),
+\href{https://web.eecs.umich.edu/~weimerw/2006-615/reading/plotkin81structural.pdf}{A Structural Approach to Operational Semantics}
+
+\end{document}

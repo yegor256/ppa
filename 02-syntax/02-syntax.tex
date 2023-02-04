@@ -39,6 +39,13 @@ EBNF is now the way to specify formal grammars. Proposed by Niklaus Wirth in 197
 The International Organization for Standardization adopted an EBNF Standard, ISO/IEC 14977, in 1996. However, there are many notations of EBNF.
 \plush{}
 
+This first published version looked like:
+\begin{ffcode}
+<number> ::= <digit> | <number> <digit>
+<digit> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+\end{ffcode}
+\plush{}
+
 Our language EBNF:
 \begin{ffcode}
 program = line { eol line };

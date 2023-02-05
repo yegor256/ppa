@@ -59,6 +59,8 @@ An \emph{axiom} is an inference rule without a premise.
 \UnaryInfC{$\vdash x \times 0 = 0 $}
 \end{prooftree}
 
+It reads: in any environment, the result of multiplication of $x$ by zero equals to zero.
+
 \plush{}
 
 \pptSection[Transition]{Transition Rule}
@@ -67,8 +69,10 @@ A \emph{transition rule} defines the conditions under which a system may be move
 
 \begin{prooftree}
 \AxiomC{$ \langle \texttt{a}, s \rangle \to \langle n, s\rangle $}
-\UnaryInfC{$ \langle \texttt{a++}, s \rangle \to \langle n, s[a \mapsto n + 1]\rangle $}
+\UnaryInfC{$ \langle \texttt{a++}, s \rangle \to \langle n, s[\texttt{a} \mapsto n + 1]\rangle $}
 \end{prooftree}
+
+It reads: if \texttt{a} produces $n$ without changing the state, then \texttt{a++} may produce $n$ changing the state by adding a new mapping $\texttt{a}\mapsto n$.
 
 \plush{}
 
@@ -92,7 +96,7 @@ A \emph{transition rule} defines the conditions under which a system may be move
 \BinaryInfC{$ \langle C_1;C_2, s \rangle \to \langle n, s''\rangle $}
 \DisplayProof
 
-\AxiomC{$ \langle s[\texttt{x}], s \rangle \to \langle n, s\rangle $}
+\AxiomC{$ \langle \texttt{x}, s \rangle \to \langle n, s\rangle $}
 \UnaryInfC{$ \langle \texttt{x++}, s \rangle \to \langle n, s[\texttt{x} \mapsto n + 1]\rangle $}
 \end{prooftree}}
 
@@ -101,16 +105,44 @@ A \emph{transition rule} defines the conditions under which a system may be move
 \pptSection[Tree]{Proof Tree}
 
 Let's prove that \texttt{a:=5;a++++;} equals to \texttt{6}:
-\begin{pptWideOne}
-\small\begin{prooftree}
-\AxiomC{$ \langle 5, \{\} \rangle \to \langle 5, \{ \}\rangle $}
+\begin{pptWide}{2}
+\scriptsize
+Transition rules:\\
+\begin{prooftree}
+\def\extraVskip{3pt}
+\AxiomC{\strut}
+\UnaryInfC{$ \langle \texttt{x}, s \rangle \to \langle s[\texttt{x}], s\rangle $}
+\DisplayProof
+\quad\quad
+\AxiomC{\strut}
+\UnaryInfC{$ \langle n, s \rangle \to \langle n, s\rangle $}
+\DisplayProof
+
+\AxiomC{$ \langle \texttt{y}, s \rangle \to \langle n, s\rangle $}
+\UnaryInfC{$ \langle \texttt{x:=y}, s \rangle \to \langle \texttt{skip}, s[\texttt{x} \mapsto n]\rangle $}
+\DisplayProof
+
+\AxiomC{$ \langle C_1, s \rangle \to \langle \texttt{skip}, s'\rangle $}
+\AxiomC{$ \langle C_2, s' \rangle \to \langle n, s''\rangle $}
+\BinaryInfC{$ \langle C_1;C_2, s \rangle \to \langle n, s''\rangle $}
+\DisplayProof
+
+\AxiomC{$ \langle \texttt{x}, s \rangle \to \langle n, s\rangle $}
+\UnaryInfC{$ \langle \texttt{x++}, s \rangle \to \langle n, s[\texttt{x} \mapsto n + 1]\rangle $}
+\end{prooftree}
+\par\columnbreak\par
+Proof tree:\\
+\begin{prooftree}
+\AxiomC{}
+\UnaryInfC{$ \langle 5, \{\} \rangle \to \langle 5, \{ \}\rangle $}
 \UnaryInfC{$ \langle \texttt{a:=5}, \{\} \rangle \to \langle \texttt{skip}, \{ \texttt{a} \mapsto 5 \}\rangle $}
-\AxiomC{$ \langle \texttt{a++}, \{ \texttt{a} \mapsto 5 \} \rangle \to \langle 5, \{ \texttt{a} \mapsto 6 \}\rangle $}
-\AxiomC{$ \langle \texttt{a++}, \{ \texttt{a} \mapsto 6 \} \rangle \to \langle 6, \{ \texttt{a} \mapsto 7 \}\rangle $}
-\BinaryInfC{$ \langle \texttt{a++++}, \{ \texttt{a} \mapsto 5 \} \rangle \to \langle 5, \{ \texttt{a} \mapsto 6 \}\rangle $}
+\AxiomC{}
+\UnaryInfC{$ \langle \texttt{a}, \{ \texttt{a} \mapsto 5 \} \rangle \to \langle 5, \{ \texttt{a} \mapsto 5 \}\rangle$}
+\UnaryInfC{$ \langle \texttt{a++}, \{ \texttt{a} \mapsto 5 \} \rangle \to \langle 5, \{ \texttt{a} \mapsto 6 \}\rangle $}
+\UnaryInfC{$ \langle \texttt{a++++}, \{ \texttt{a} \mapsto 5 \} \rangle \to \langle 6, \{ \texttt{a} \mapsto 7 \}\rangle $}
 \BinaryInfC{$ \langle \texttt{a:=5;a++++}, \{ \} \rangle \to \langle 6, \{ \texttt{a} \mapsto 7 \}\rangle $}
 \end{prooftree}
-\end{pptWideOne}
+\end{pptWide}
 
 \plush{}
 
@@ -125,7 +157,7 @@ x^n \bm{\Downarrow} y \quad\text{where}\; y = x \times x \times x \dots \times x
 The \emph{operational semantics} describe the computation steps taken in order to evaluate the expression to \emph{normal form}:
 \begin{gather*}
 \mathrel{\bm{\leadsto}} \subseteq \mathcal{A} \times \mathcal{A} \\
-x^n \bm{\leadsto} x \times x^{n-1} \quad\text{if}\; x > 0 \quad\quad x^0 \bm{\leadsto} 1
+\text{1)}\; x^n \bm{\leadsto} x \times x^{n-1} \quad\text{if}\; x > 0 \quad\quad \text{2)}\; x^0 \bm{\leadsto} 1
 \end{gather*}
 
 The operational semantics is the specification of an \emph{interpreter} for the programming language whereas the denotational semantics tries to capture the \emph{mathematical essence} of a program, abstracting away from computational details.

@@ -34,6 +34,20 @@
 
 \pptSection[Inference]{Inference Rule}
 
+A \emph{proof system} is formed from a set of rules chained together to form proofs, also called \emph{derivations}. Any derivation has only one final conclusion, which is the statement proved or derived. (Wiki)
+
+\begin{prooftree}
+\alwaysSolidLine
+\AxiomC{$\vdash a < b$}
+\AxiomC{$\vdash b < c$}
+\RightLabel{R1}
+\BinaryInfC{$a < c$}
+\end{prooftree}
+
+Premises (known \emph{facts}): $a < b$ and $b < c$.
+
+Conclusion (new fact): $a < c$.
+
 \plush{}
 
 \pptSection[Rewrite]{Rewrite Rule}
@@ -93,8 +107,6 @@ Semantic ($\bm{\Downarrow} \subseteq \langle \texttt{COMMAND}, \mathbb{N} \rangl
 \pptSection[Tree]{Proof Tree}
 
 \begin{prooftree}
-\alwaysSolidLine
-\def\extraVskip{24pt}
 \AxiomC{$45 < 60$}
 \RightLabel{R2}
 \UnaryInfC{$ \langle \texttt{FASTER}, 45 \rangle \Downarrow \langle \textbf{tt}, 65 \rangle $}

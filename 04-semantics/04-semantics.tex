@@ -30,33 +30,62 @@
 
 \pptToc
 
+\pptSection{Inference Rule}
+
+\plush{}
+
+\pptSection{Rewrite Rule}
+
+\plush{}
+
 \plush{\pptChapter{Operational vs Denotational}}
 
-The \emph{denotational semantics} assign to every expression the number denoted by that expression:
-
-\begin{equation*}
-\Downarrow \subseteq \mathcal{A} \times \mathcal{D}
-x^n \leadsto 1 \quad\text{if}\; n = 0
-\end{equation*}
+The \emph{denotational semantics} assign to every expression the \emph{number} denoted by that expression:
+\begin{gather*}
+\bm{\Downarrow} \subseteq \mathcal{A} \times \mathcal{D} \\
+x^n \bm{\Downarrow} y \quad\text{where}\; y = x \times x \times x \dots \times x \quad\text{($n$ times)}
+\end{gather*}
 
 The \emph{operational semantics} describe the computation steps taken in order to evaluate the expression to \emph{normal form}:
-
 \begin{gather*}
-\leadsto \subseteq \mathcal{A} \times \mathcal{A} \\
-x^n \leadsto x \times x \times x \quad\text{if}\; x = 3
+\bm{\leadsto} \subseteq \mathcal{A} \times \mathcal{A} \\
+x^n \bm{\leadsto} x \times x^{n-1} \quad\text{if}\; x > 0 \quad\quad x^0 \bm{\leadsto} 1
 \end{gather*}
 
 The operational semantics is the specification of an \emph{interpreter} for the programming language whereas the denotational semantics tries to capture the \emph{mathematically essence} of a program, abstracting away from computational details.
 
-\pptSection{Rewrite Rules}
+\plush{}
 
-\pptSection{Example of Natural Semantics}
+\pptSection{Natural Semantic (Denotational)}
 
-\begin{equation*}
+Syntax: {\ttfamily FASTER; STOP; SLOWER;}\\
+Semantic:
+\begin{gather*}
 \frac
-  {E }
   {}
-\end{equation*}
+  {\langle \texttt{STOP}, s \rangle \Downarrow \langle \texttt{tt}, 0 \rangle }
+\\[24pt]
+\frac
+  { s < 60 }
+  {\langle \texttt{FASTER}, s \rangle \Downarrow \langle \texttt{tt}, s + 20 \rangle }
+\quad
+\frac
+  { s \geq 60 }
+  {\langle \texttt{FASTER}, s \rangle \Downarrow \langle \texttt{ff}, s \rangle }
+\\[24pt]
+\frac
+  {}
+  {\langle \texttt{SLOWER}, s \rangle \Downarrow \langle \texttt{tt}, \text{max}(0, s - 20) \rangle }
+\\[24pt]
+\frac
+  {\langle C_1, s \rangle \Downarrow \langle r_1, s' \rangle \quad \langle C_2, s' \rangle \Downarrow \langle r_2, s'' \rangle }
+  {\langle C_1 ; C_2, s \rangle \Downarrow \langle r_1 \wedge r_2, s'' \rangle }
+\end{gather*}
+\plush{}
+
+\pptSection{Proof Tree}
+
+\pptSection{Structural Semantic (Operational)}
 
 \plush{}
 
@@ -66,7 +95,7 @@ Christopher Strachey (2000),
 \emph{Fundamental Concepts in Programming Languages}
 
 Alexander Kurz (2022),
-\href{https://hackmd.io/@alexhkurz/Hkf6BTL6P}{\emph{Operational and Denotational Semantics}}
+\href{https://hackmd.io/@alexhkurz/Hkf6BTL6P}{Operational and Denotational Semantics}
 
 Michael Pradel (2021),
 \href{https://www.youtube.com/watch?v=jsBHd3-04oA}{Lectures on ``Operational Semantics''}

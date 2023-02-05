@@ -30,10 +30,23 @@
 
 \pptToc
 
+\pptBanner{Code Understanding Pipeline}
+\begin{tikzpicture}[graph]
+\node[draw=none] (start) {};
+\node[terminal,below right=.4cm and -2cm of start] (parsing) {Lexical Analysis}; \draw (start) edge node[note,anchor=east] {Chars} (parsing);
+\node[terminal,below right=.6cm and -2cm of parsing] (syntax) {Syntactical Analysis}; \draw (parsing) edge node[note,anchor=east] {Tokens} (syntax);
+\node[terminal,below right=.6cm and -2cm of syntax] (inter) {Interpretation}; \draw (syntax) edge node[note,anchor=west] {Concrete Syntax Tree (CST)} (inter);
+\node[terminal,below right=.6cm and -2cm of inter] (context) {Contextual Analysis}; \draw (inter) edge node[note,anchor=west] {Abstract Syntax Tree (AST)} (context);
+\node[terminal,below right=.6cm and -2cm of context] (static) {Static Analysis}; \draw (context) edge node[note,anchor=east] {Decorated AST} (static);
+\node[draw=none,below right=.4cm and -2cm of static] (end) {}; \draw (static) edge node[note,anchor=east] {Errors} (end);
+\end{tikzpicture}
+\plush{}
+
 \plush{\pptChapter[Trees]{Concrete vs. Abstract}}
 
 The \emph{concrete syntax} of a programming language is defined by a context free grammar (CFG).
 The \emph{abstract syntax} of an implementation is the set of trees used to represent programs in the implementation.
+
 \plush{}
 
 Simple program:
@@ -83,31 +96,102 @@ Abstract Syntax Tree:
 
 \begin{multicols}{2}
 {\ttfamily
-var x; \\
-loop \{ var x; x++; \}; \\
+int x; \\
+loop \{ int x; x++; \}; \\
 print x;}
 \par\columnbreak\par
 \begin{tikzpicture}[graph]
 \node[terminal] (p) {program};
-\node[terminal,below left=1cm of p] (var1) {var x}; \path (p) edge (var1);
+\node[terminal,below left=1cm of p] (var1) {int x}; \path (p) edge (var1);
 \node[terminal,below=1.2cm of p] (loop) {loop}; \path (p) edge (loop);
 \node[terminal,below right=1cm and 3cm of p] (print) {print}; \path (p) edge (print);
 \node[terminal,below=1cm of print] (x2) {x}; \path (print) edge (x2);
-\node[terminal,below left=1cm of loop] (var2) {var x}; \path (loop) edge (var2);
+\node[terminal,below left=1cm of loop] (var2) {int x}; \path (loop) edge (var2);
 \node[terminal,below right=1cm of loop] (plus) {++}; \path (loop) edge (plus);
 \node[terminal,below=1cm of plus] (x1) {x}; \path (plus) edge (x1);
 \end{tikzpicture}
 \end{multicols}
 
 Somehow we must \emph{link} different $x$ to different places, where they are \emph{declared},
-maybe with the help of "\emph{ID table}," or by attaching attributes to AST nodes, or both.
+maybe with the help of "\emph{Identification Table}," or by attaching attributes to AST nodes, or both.
+We may want to track their \emph{indentation levels}.
 \plush{}
 
-\pptSection{Type Checking}
+\pptSection{Static Type Checking and Inference}
 
+Dynamically-typed languages perform \emph{type checking} at \emph{runtime},
+while statically typed languages perform type checking at \emph{compile time}.
 
+\begin{multicols}{2}
+{\ttfamily
+var x = "Sofi"; \\
+loop \{ var x; x++; \}; \\
+print "Hello," + x;}
+\par\columnbreak\par
+\begin{tikzpicture}[graph]
+\node[terminal] (p) {program};
+\node[terminal,below left=1cm of p] (var1) {x="Sofi"}; \path (p) edge (var1);
+\node[terminal,below=1.2cm of p] (loop) {loop}; \path (p) edge (loop);
+\node[terminal,below left=1cm of loop] (var2) {var x}; \path (loop) edge (var2);
+\node[terminal,below right=1cm of loop] (plusplus) {++}; \path (loop) edge (plus);
+\node[terminal,below=1cm of plusplus] (x1) {x}; \path (plusplus) edge (x1);
+\node[terminal,below right=3cm and 3cm of p] (print) {print}; \path (p) edge (print);
+\node[terminal,below=1cm of print] (plus) {+}; \path (print) edge (plus);
+\node[terminal,below left=1cm of plus] (hello) {"Hello,"}; \path (plus) edge (hello);
+\node[terminal,below right=1cm of plus] (x2) {x}; \path (plus) edge (x2);
+\end{tikzpicture}
+\end{multicols}
 
-\pptSection{Type Inference}
+\plush{}
+
+\pptSection{Visitor for AST Traversal}
+
+\plush{}
+
+\pptSection{Decorated AST}
+
+\begin{multicols}{2}
+{\ttfamily
+int x; \\
+loop \{ int x; x++; \}; \\
+print x;}
+\par\columnbreak\par
+\begin{tikzpicture}[graph]
+\node[terminal] (p) {program};
+\node[terminal,below left=1cm of p] (var1) {int x}; \path (p) edge (var1);
+\node[terminal,below=1.2cm of p] (loop) {loop}; \path (p) edge (loop);
+\node[terminal,below right=1cm and 3cm of p] (print) {print}; \path (p) edge (print);
+\node[terminal,below=1cm of print] (x2) {x}; \path (print) edge (x2);
+\node[terminal,below left=1cm of loop] (var2) {int x}; \path (loop) edge (var2);
+\node[terminal,below right=1cm of loop] (plus) {++}; \path (loop) edge (plus);
+\node[terminal,below=1cm of plus] (x1) {x}; \path (plus) edge (x1);
+\node[terminal,draw=none,below=0cm of var1,font={\color{red}}] {\texttt{i31}};
+\node[terminal,draw=none,below=0cm of var2,font={\color{red}}] {\texttt{i32}};
+\node[terminal,draw=none,below=0cm of x1,font={\color{red}}] {\texttt{i32,int}};
+\node[terminal,draw=none,below=0cm of x2,font={\color{red}}] {\texttt{i31,int}};
+\end{tikzpicture}
+\end{multicols}
+
+\plush{\pptChapter[CFG]{Control Flow Graph}}
+
+\pptSection{CFG}
+
+\begin{multicols}{2}
+{\ttfamily
+int x = 42; \\
+loop \{ int x = 0; x++; \}; \\
+print x;}
+\par\columnbreak\par
+\begin{tikzpicture}[graph]
+\node (start) {$\circ$};
+\node[terminal,below=1cm of start] (var1) {int x = 42;}; \path (start) edge (var1);
+\node[terminal,below=1cm of var1] (var2) {int x = 0;}; \path (var1) edge (var2);
+\node[terminal,below=1cm of var2] (plus) {x++;}; \path (var1) edge (var2);
+\node[terminal,below=1cm of var2] (print) {print x;}; \path (var2) edge (print);
+\node[below=1cm of print] (exit) {$\circ$}; \path (print) edge (exit);
+\path (plus) edge [bend right=45] (var2);
+\end{tikzpicture}
+\end{multicols}
 
 
 \end{document}

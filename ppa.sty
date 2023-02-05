@@ -29,8 +29,10 @@
 \RequirePackage[static]{clicks}
 \RequirePackage[template,scheme=light]{ppt-slides}
 \RequirePackage[nocn]{ffcode}
+\RequirePackage{bussproofs}
 \RequirePackage{bm}
 \RequirePackage{amsmath}
+\RequirePackage{amssymb}
 \RequirePackage{graphicx}
   \graphicspath{{../images/}}
 
@@ -41,11 +43,13 @@
 \RequirePackage{soul}
 \renewcommand\emph[1]{\ul{#1}}
 \tikzstyle{graph} = [
-    every node/.style={draw=black,circle,minimum width=2.2em},
-    every edge/.append style={draw=black,-{Latex[length=2.5mm,width=2mm]},every node/.style={above}},
-    every loop/.append style={draw=black,-{Latex[length=2.5mm,width=2mm]},every node/.style={above}},
-    terminal/.style=rectangle,
+  node distance=0,
+  every node/.style={draw=black,circle,minimum width=2.2em,thick},
+  every edge/.append style={draw=black,thick,-{Latex[length=2.5mm,width=2mm]},every node/.style={above}},
+  every loop/.append style={draw=black,thick,-{Latex[length=2.5mm,width=2mm]},every node/.style={above}},
 ]
+\tikzstyle{terminal} = [rectangle]
+\tikzstyle{note} = [draw=none,rectangle,midway,font={\small\color{orange}}]
 
 \newcommand\br{\newline}
 

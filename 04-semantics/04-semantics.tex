@@ -30,15 +30,17 @@
 
 \pptToc
 
-\pptSection{Inference Rule}
+\plush{\pptChapter{Rules}}
+
+\pptSection[Inference]{Inference Rule}
 
 \plush{}
 
-\pptSection{Rewrite Rule}
+\pptSection[Rewrite]{Rewrite Rule}
 
 \plush{}
 
-\plush{\pptChapter{Operational vs Denotational}}
+\plush{\pptChapter[Vs.]{Operational vs Denotational}}
 
 The \emph{denotational semantics} assign to every expression the \emph{number} denoted by that expression:
 \begin{gather*}
@@ -56,36 +58,58 @@ The operational semantics is the specification of an \emph{interpreter} for the 
 
 \plush{}
 
-\pptSection{Natural Semantic (Denotational)}
+\pptSection[Natural]{Natural Semantic (Denotational)}
 
 Syntax: {\ttfamily FASTER; STOP; SLOWER;}\\
-Semantic:
+Semantic ($\bm{\Downarrow} \subseteq \langle \texttt{COMMAND}, \mathbb{N} \rangle \times \langle \mathbb{B}, \mathbb{N} \rangle$):
 \begin{gather*}
 \frac
   {}
-  {\langle \texttt{STOP}, s \rangle \Downarrow \langle \texttt{tt}, 0 \rangle }
+  {\langle \texttt{STOP}, s \rangle \Downarrow \langle \textbf{tt}, 0 \rangle }
+  \text{R1}
 \\[24pt]
 \frac
   { s < 60 }
-  {\langle \texttt{FASTER}, s \rangle \Downarrow \langle \texttt{tt}, s + 20 \rangle }
+  {\langle \texttt{FASTER}, s \rangle \Downarrow \langle \textbf{tt}, s + 20 \rangle }
+  \text{R2}
 \quad
 \frac
   { s \geq 60 }
-  {\langle \texttt{FASTER}, s \rangle \Downarrow \langle \texttt{ff}, s \rangle }
+  {\langle \texttt{FASTER}, s \rangle \Downarrow \langle \textbf{ff}, s \rangle }
+  \text{R3}
 \\[24pt]
 \frac
   {}
-  {\langle \texttt{SLOWER}, s \rangle \Downarrow \langle \texttt{tt}, \text{max}(0, s - 20) \rangle }
+  {\langle \texttt{SLOWER}, s \rangle \Downarrow \langle \textbf{tt}, \text{max}(0, s - 20) \rangle }
+  \text{R4}
 \\[24pt]
 \frac
   {\langle C_1, s \rangle \Downarrow \langle r_1, s' \rangle \quad \langle C_2, s' \rangle \Downarrow \langle r_2, s'' \rangle }
   {\langle C_1 ; C_2, s \rangle \Downarrow \langle r_1 \wedge r_2, s'' \rangle }
+  \text{R5}
 \end{gather*}
 \plush{}
 
-\pptSection{Proof Tree}
+\pptSection[Tree]{Proof Tree}
 
-\pptSection{Structural Semantic (Operational)}
+\begin{prooftree}
+\alwaysSolidLine
+\def\extraVskip{24pt}
+\AxiomC{$45 < 60$}
+\RightLabel{R2}
+\UnaryInfC{$ \langle \texttt{FASTER}, 45 \rangle \Downarrow \langle \textbf{tt}, 65 \rangle $}
+\AxiomC{$65 > 60$}
+\RightLabel{R3}
+\UnaryInfC{$ \langle \texttt{FASTER}, 65 \rangle \Downarrow \langle \textbf{ff}, 65 \rangle $}
+\RightLabel{R5}
+\BinaryInfC{$ \langle \texttt{FASTER}; \texttt{FASTER}, 45 \rangle \Downarrow \langle \textbf{ff}, 65 \rangle $}
+\AxiomC{$ \langle \texttt{SLOWER}, 65 \rangle \Downarrow \langle \textbf{tt}, 45 \rangle $}
+\RightLabel{R5}
+\BinaryInfC{$ \langle \texttt{FASTER}; \texttt{FASTER}; \texttt{SLOWER}, 45 \rangle \Downarrow \langle \textbf{ff}, 45 \rangle $}
+\end{prooftree}
+\plush{}
+
+\pptSection[SOS]{Structural Semantic (Operational)}
 
 \plush{}
 

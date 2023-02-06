@@ -146,6 +146,30 @@ print "Hello," + x;}
 
 \pptSection{Visitor for AST Traversal}
 
+ANTLR4 lets us implement the following interface:
+
+\begin{ffcode}
+public interface ParseTreeListener {
+  void visitTerminal(TerminalNode var1);
+  void visitErrorNode(ErrorNode var1);
+  void enterEveryRule(ParserRuleContext var1);
+  void exitEveryRule(ParserRuleContext var1);
+}
+\end{ffcode}
+
+\plush{}
+
+Then:
+\begin{ffcode}
+MyLexer lexer = new MyLexer(text); // Lexer
+MyParser parser = new MyParser(
+  new CommonTokenStream(lexer)  // Parser
+);
+MyListener lsr = new MyListener(); // ParseTreeListener
+new ParseTreeWalker().walk(lsr, parser.program());
+\end{ffcode}
+
+
 \plush{}
 
 \pptSection{Decorated AST}
@@ -171,6 +195,7 @@ print x;}
 \node[terminal,draw=none,below=0cm of x2,font={\color{red}}] {\texttt{i31,int}};
 \end{tikzpicture}
 \end{multicols}
+\plush{}
 
 \plush{\pptChapter[CFG]{Control Flow Graph}}
 
@@ -186,10 +211,10 @@ print x;}
 \node (start) {$\circ$};
 \node[terminal,below=1cm of start] (var1) {int x = 42;}; \path (start) edge (var1);
 \node[terminal,below=1cm of var1] (var2) {int x = 0;}; \path (var1) edge (var2);
-\node[terminal,below=1cm of var2] (plus) {x++;}; \path (var1) edge (var2);
-\node[terminal,below=1cm of var2] (print) {print x;}; \path (var2) edge (print);
+\node[terminal,below=1cm of var2] (plus) {x++;}; \path (var2) edge (plus);
+\node[terminal,below=1cm of plus] (print) {print x;}; \path (plus) edge (print);
 \node[below=1cm of print] (exit) {$\circ$}; \path (print) edge (exit);
-\path (plus) edge [bend right=45] (var2);
+\path (plus.east) edge [bend right=90] (var2.east);
 \end{tikzpicture}
 \end{multicols}
 

@@ -22,8 +22,8 @@
 
 \documentclass{article}
 \usepackage{../ppa}
-\newcommand*\thetitle{Abstract Syntax Tree}
-\newcommand*\thesubtitle{...}
+\newcommand*\thetitle{Contextual Analysis}
+\newcommand*\thesubtitle{AST, Interpretation, CFG}
 \begin{document}
 
 \plush{\innoTitlePage{3}}
@@ -90,9 +90,7 @@ Abstract Syntax Tree:
 \end{multicols}
 \plush{}
 
-\plush{\pptChapter[Contextual]{Contextual Analysis}}
-
-\pptSection{Identification}
+\plush{\pptChapter{Identification}}
 
 \begin{multicols}{2}
 {\ttfamily
@@ -117,7 +115,7 @@ maybe with the help of "\emph{Identification Table}," or by attaching attributes
 We may want to track their \emph{indentation levels}.
 \plush{}
 
-\pptSection{Static Type Checking and Inference}
+\plush{\pptChapter{Static Type Checking}}
 
 Dynamically-typed languages perform \emph{type checking} at \emph{runtime},
 while statically typed languages perform type checking at \emph{compile time}.
@@ -144,7 +142,7 @@ print "Hello," + x;}
 
 \plush{}
 
-\pptSection{Visitor for AST Traversal}
+\plush{\pptChapter{AST Visitor}}
 
 ANTLR4 lets us implement the following interface:
 
@@ -169,10 +167,9 @@ MyListener lsr = new MyListener(); // ParseTreeListener
 new ParseTreeWalker().walk(lsr, parser.program());
 \end{ffcode}
 
-
 \plush{}
 
-\pptSection{Decorated AST}
+\plush{\pptChapter{Decorated AST}}
 
 \begin{multicols}{2}
 {\ttfamily
@@ -198,8 +195,6 @@ print x;}
 \plush{}
 
 \plush{\pptChapter[CFG]{Control Flow Graph}}
-
-\pptSection{CFG}
 
 \begin{multicols}{2}
 {\ttfamily

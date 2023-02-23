@@ -3,7 +3,8 @@
 [![latexmk](https://github.com/yegor256/ppa/actions/workflows/latexmk.yml/badge.svg?branch=master)](https://github.com/yegor256/ppa/actions/workflows/latexmk.yml)
 
 There are slides for my series of lectures for a few universities in Russia.
-The series is titled "Practical Program Analysis"
+The series is titled "**Practical Program Analysis**."
+
 All compiled slide decks in PDF are [here](https://yegor256.github.io/ppa/).
 
 To compile everything just run:

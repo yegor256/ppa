@@ -109,10 +109,26 @@ $\langle c, r, m\rangle$.
 
 \plush{\pptChapter{Semantic}}
 
-This is our programming language to draw on canvas:
+This is our programming language that helps us draw on a canvas:
 
-\begin{ffcode}
-LINE 10, 20
-\end{ffcode}
+
+\begin{multicols}{2}
+{\ttfamily
+L 10, 20, 15, 23; \\
+C 13, 13, 45; \\
+L 5, 28, 15, 12;}
+\par\columnbreak\par
+\begin{tikzpicture}[scale=5,line width=4pt]
+\path[draw] (1, 2) -- (1.5, 2.3);
+\path[draw] (.5, 2.8) -- (1.5, 1.2);
+\node[circle,minimum height=4.5cm,draw] at (1.3, 1.3) {};
+\end{tikzpicture}
+\end{multicols}
+
+Its semantic may be explained by the abstract machine with the following instruction set, which semantic is \textbf{obvious} to a reader:
+
+{\ttfamily
+MOVE x, y; DRAW; LOOP; BREAK; }
+
 
 \end{document}

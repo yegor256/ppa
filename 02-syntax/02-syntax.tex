@@ -73,7 +73,6 @@ Lexers are implemented as DFAs, which use regular expressions. For example, this
 The DFA for this language (pattern matching rules on the edges): \\
 \begin{tikzpicture}[graph]
 \node (s) {$S$};
-% \path ($ (s)-(10cm:0cm) $) edge (s);
 \node[double,right=1.5cm of s] (s1) {1};
 \path (s) edge node {\texttt{1-9}} (s1);
 \path (s1) edge[loop above] node {\texttt{0-9}} (s1);

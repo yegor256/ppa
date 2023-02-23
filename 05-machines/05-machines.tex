@@ -30,7 +30,7 @@
 
 \pptToc
 
-\plush{\pptChapter[Turing]{Who Are Abstract Machines?}}
+\plush{\pptChapter[Machines]{Who Are Abstract Machines?}}
 
 \pptSection{Definition}
 
@@ -96,6 +96,23 @@ There \textbf{has never been a proof}, but the evidence for its validity comes f
 
 \plush{}
 
+\plush{\pptChapter[$\lambda$]{$\lambda$-calculus}}
+
+Abstraction:
+\begin{equation*}
+(\lambda x . t)\quad\quad \text{e.g.}\; f = \lambda x . \sqrt{x}
+\end{equation*}
+
+Application:
+\begin{equation*}
+\lambda (t s)\quad\quad \text{e.g.}\; (f\;16) = 4
+\end{equation*}
+
+In lambda calculus, \emph{functions} are taken to be ``first class values,''
+so functions may be used as the inputs, or be returned as outputs from other functions.
+
+\plush{}
+
 \plush{\pptChapter[FSM]{Finite-State Machine}}
 
 \plush{\pptChapter[SECD]{SECD Machine(s)}}
@@ -103,7 +120,7 @@ There \textbf{has never been a proof}, but the evidence for its validity comes f
 There are SECD (\textbf{s}tack, \textbf{e}nvironment, \textbf{c}ontrol, \textbf{d}ump),
 CESK, CEK, CS, and maybe other abstract machines.
 
-I like the CRM (\textbf{c}ontrol, \textbf{r}esults, \textbf{m}emory) machine explained by
+I like the CRM (\textbf{c}ontrol stack, \textbf{r}esult stack, \textbf{m}emory) machine explained by
 \href{https://software-lab.org/people/Michael_Pradel.html}{Michael Pradel} in
 \href{https://www.youtube.com/watch?v=YRfb2zDk_qs}{his YouTube course} about program analysis:
 $\langle c, r, m\rangle$.
@@ -113,7 +130,7 @@ $\langle c, r, m\rangle$.
 \langle \texttt{x} \mathrel{\texttt{:=}} 2 \times 3, \texttt{nil}, \{\} \rangle
   & \longrightarrow \langle \texttt{x} \mathrel{\circ} 2 \times 3 \mathrel{\circ} \mathrel{\texttt{:=}}, \texttt{nil}, \{ \}\rangle \\
   & \longrightarrow \langle 2 \times 3 \mathrel{\circ} \mathrel{\texttt{:=}}, \texttt{x} \mathrel{\circ} \texttt{nil}, \{ \}\rangle \\
-  & \longrightarrow \langle \mathrel{\texttt{:=}}, \texttt{x} \mathrel{\circ} \texttt{6} \mathrel{\circ} \texttt{nil}, \{ \}\rangle \\
+  & \longrightarrow \langle \mathrel{\texttt{:=}}, \texttt{6} \mathrel{\circ} \texttt{x} \mathrel{\circ} \texttt{nil}, \{ \}\rangle \\
   & \longrightarrow \langle \texttt{nil}, \texttt{nil}, \{ \texttt{x} \mapsto 6 \}\rangle \\
 \end{split}
 \end{equation*}
@@ -139,10 +156,10 @@ Its semantic may be explained by the abstract machine with the following instruc
 \end{tikzpicture}
 \end{multicols}
 
-{\ttfamily MOVE x, y; DRAW; \\
-LOOP; IF t THEN BREAK; IF t THEN CONTINUE; END LOOP; \\
-x > y; \\
-x := y; x + y; x / y; \\
+{\ttfamily DRAW x, y; \\
+LOOP; IF t THEN BREAK; END LOOP; \\
+x > y; x + y; x - y; x / y; \\
+x := y; \\
 1600; 900.}
 
 \plush{}

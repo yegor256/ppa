@@ -2,6 +2,8 @@
 
 [![latexmk](https://github.com/yegor256/ppa/actions/workflows/latexmk.yml/badge.svg?branch=master)](https://github.com/yegor256/ppa/actions/workflows/latexmk.yml)
 
+**THE COURSE IS CURRENTLY UNDER CONSTRUCTION!**
+
 There are slides for my series of lectures for a few universities in Russia.
 The series is titled "**Practical Program Analysis**."
 

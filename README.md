@@ -1,3 +1,5 @@
+<img src="innopolis-logo.svg" height="48px"/>
+
 [![latexmk](https://github.com/yegor256/ppa/actions/workflows/latexmk.yml/badge.svg?branch=master)](https://github.com/yegor256/ppa/actions/workflows/latexmk.yml)
 
 There are slides for my series of lectures for a few universities in Russia.

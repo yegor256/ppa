@@ -5,7 +5,8 @@
 **THE COURSE IS CURRENTLY UNDER CONSTRUCTION!**
 
 There are slides for my series of lectures for a few universities in Russia.
-The series is titled "**Practical Program Analysis**."
+
+All recorded videos are in [this YouTube playlist](https://www.youtube.com/playlist?list=PLaIsQH4uc08wdXIC4utfgMxV_iswE9_Md).
 
 All compiled slide decks in PDF are [here](https://yegor256.github.io/ppa/).
 

@@ -21,6 +21,9 @@
 % SOFTWARE.
 
 \documentclass{article}
+\usepackage[T2A,T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{CJKutf8} % for chinese font
 \usepackage{../ppa}
 \newcommand*\thetitle{Program Analysis}
 \newcommand*\thesubtitle{...}
@@ -32,10 +35,20 @@
 
 \plush{\pptChapter{Basics}}
 
-\pptSection[Property]{Syntactic \& Semantic Property}
+\pptSection[Property]{Syntactic \& Semantic Properties}
 
 \emph{Semantic} property can be completely defined with respect to the set of executions of a program,
 while a \emph{syntactic} property can be decided directly based on the program text.
+
+{\ttfamily if (x) \{ printf(\begin{CJK}{UTF8}{gbsn}"大家好"\end{CJK}); \}}
+
+Which properties are dynamic?
+\begin{itemize}\setlength\itemsep{0pt}
+\item A program may print a text to the console
+\item A program may call \texttt{printf()} C library function
+\item A program prints to the console
+\item A program consists of one line of code
+\end{itemize}
 
 \plush{}
 
@@ -53,12 +66,15 @@ A property is \emph{non-trivial} if it is neither true for every partial computa
 
 Examples of a non-trivial properties:
 
-\begin{itemize}
+\begin{itemize}\setlength\itemsep{0pt}
 \item A program exits
 \item A program prints ``Hello''
+\item A program finishes in less than 5 seconds
 \item A program dies with ``Segmentation Fault''
 \item A program prints user password to the console
 \end{itemize}
+
+Suggest a few properties.
 
 \plush{}
 
@@ -101,7 +117,7 @@ int f (int x) \\
 \}}
 \par\columnbreak\par
 {\ttfamily
-int f(int x) \{ \\
+int foo(int x) \{ \\
 \quad return 42 / x; \\
 \}}
 \end{multicols}
@@ -118,23 +134,27 @@ Expected answers from cpplint:
 
 \pptSection{Dynamic Analysis}
 
-Consider this C++ programs given to a \emph{dynamic analyzer}:
+Consider this C++ programs given to a \emph{dynamic analyzer}
+(\href{https://en.wikipedia.org/wiki/Code_sanitizer}{AddressSanitizer}):
 
+\begin{pptWideOne}
 \begin{multicols}{2}
 {\ttfamily
-int* foo() \{ \\
-\quad return (int*) 42; \\
+int foo(int i) \{ \\
+\quad int a[5]; \\
+\quad return a[i]; \\
 \} \\
 int main() \{ \\
-\quad int* p = foo(); \\
-\quad return *p; \\
+\quad return foo(6); \\
 \}}
 \par\columnbreak\par
 {\ttfamily
-\$ gcc main.cpp \\
-\$ ./a.out \\
-Segmentation fault: 11}
+\$ gcc -fsanitize=address -g a.cpp \\
+\$ ./a.out}
+
+\pptPic{1}{address.png}
 \end{multicols}
+\end{pptWideOne}
 
 \plush{}
 
@@ -150,7 +170,7 @@ Segmentation fault: 11}
 
 \emph{Precision} is the fraction of relevant instances among the retrieved instances (100\% precision means \emph{soundness}).
 
-\emph{Recall} is the fraction of relevant instances that were retrieved (100\% recall means \emph{completness}).
+\emph{Recall} is the fraction of relevant instances that were retrieved (100\% recall means \emph{completeness}).
 
 \begin{pptWideOne}
 \begin{equation*}
@@ -208,6 +228,14 @@ FN = \underline{\hspace{1cm}}
 
 \plush{\pptChapter{Abstract Interpretation}}
 
+
+There is a compromise to be made between the precision of the analysis and
+its decidability (computability), or tractability (computational cost).
+
 \plush{\pptChapter{Approximation}}
+
+\pptSection{Further Reading/Watching}
+
+Lecture by Patrick Cousot, on \href{https://www.youtube.com/watch?v=IBlfJerAcRw}{YouTube}
 
 \end{document}

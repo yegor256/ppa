@@ -32,16 +32,182 @@
 
 \plush{\pptChapter{Basics}}
 
-\plush{
-  \pptSection[Property]{Syntactic \& Semantic Property}
-  Semantic property can be completely defined with respect to the set of executions of a program,
-  while a syntactic property can be decided directly based on the program text.
-  % \pptPic{0.8}{syntactic-semantic.jpg}
-}
+\pptSection[Property]{Syntactic \& Semantic Property}
 
-\plush{
-  \pptSection[Sound]{Sound \& Complete}
-  \pptPic{0.8}{sound-complete.jpg}
-}
+\emph{Semantic} property can be completely defined with respect to the set of executions of a program,
+while a \emph{syntactic} property can be decided directly based on the program text.
+
+\plush{}
+
+\pptSection{Rice's Theorem}
+
+\emph{Rice's theorem} states that all non-trivial semantic properties of programs are undecidable.
+
+A property is \emph{non-trivial} if it is neither true for every partial computable function, nor false for every partial computable function.
+
+\emph{Halting problem} is the problem of determining, from 1)~a description of an arbitrary computer program and 2)~an input, whether the program will finish running, or continue to run forever. A general algorithm to solve the halting problem for all possible program–input pairs \textbf{cannot exist}.
+
+\plush{}
+
+\pptSection{Non-trivial Properties}
+
+Examples of a non-trivial properties:
+
+\begin{itemize}
+\item A program exits
+\item A program prints ``Hello''
+\item A program dies with ``Segmentation Fault''
+\item A program prints user password to the console
+\end{itemize}
+
+\plush{}
+
+\pptSection{Static Analysis}
+
+Consider two C++ programs given to a \emph{static analyzer} (e.g. \href{https://clang.llvm.org/extra/clang-tidy/}{Clang Tidy}):
+
+\begin{multicols}{2}
+{\ttfamily
+int f() \{ \\
+\quad int x = 0; \\
+\quad return 42 / x; \\
+\}}
+\par\columnbreak\par
+{\ttfamily
+int f(int x) \{ \\
+\quad return 42 / x; \\
+\}}
+\end{multicols}
+
+Expected answers from Clang Tidy:
+
+\begin{multicols}{2}
+\textcolor{green}{\textbf{Yes! :)}}
+\par\columnbreak\par
+\textcolor{red}{\textbf{No :(}}
+\end{multicols}
+
+\plush{}
+
+\pptSection{Style Checking}
+
+Consider two C++ programs given to a \emph{style checker} (e.g. \href{https://github.com/cpplint/cpplint}{cpplint}):
+
+\begin{multicols}{2}
+{\ttfamily
+int f (int x) \\
+\{ \\
+\quad return 42 / x; \\
+\}}
+\par\columnbreak\par
+{\ttfamily
+int f(int x) \{ \\
+\quad return 42 / x; \\
+\}}
+\end{multicols}
+
+Expected answers from cpplint:
+
+\begin{multicols}{2}
+\textcolor{green}{{\ttfamily Extra space before ( in function call ; \{ should almost always be at the end of the previous line}}
+\par\columnbreak\par
+\textcolor{red}{\textbf{No :(}}
+\end{multicols}
+
+\plush{}
+
+\pptSection{Dynamic Analysis}
+
+Consider this C++ programs given to a \emph{dynamic analyzer}:
+
+\begin{multicols}{2}
+{\ttfamily
+int* foo() \{ \\
+\quad return (int*) 42; \\
+\} \\
+int main() \{ \\
+\quad int* p = foo(); \\
+\quad return *p; \\
+\}}
+\par\columnbreak\par
+{\ttfamily
+\$ gcc main.cpp \\
+\$ ./a.out \\
+Segmentation fault: 11}
+\end{multicols}
+
+\plush{}
+
+\plush{\pptChapter[Quality]{Quality of Analysis}}
+
+\pptSection[Sound]{Sound \& Complete}
+
+\pptPic{0.8}{sound-complete.jpg}
+
+\plush{}
+
+\pptSection[Metrics]{Precision \& Recall}
+
+\emph{Precision} is the fraction of relevant instances among the retrieved instances (100\% precision means \emph{soundness}).
+
+\emph{Recall} is the fraction of relevant instances that were retrieved (100\% recall means \emph{completness}).
+
+\begin{pptWideOne}
+\begin{equation*}
+\text{Precision} = \frac{TP}{TP + FP}
+\quad\quad
+\text{Recall} = \frac{TP}{TP + FN}
+\quad\quad
+\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
+\end{equation*}
+\end{pptWideOne}
+
+\plush{}
+
+\pptSection{Experiment}
+
+Say, we give a few programs to a static analyzer:
+
+\begin{tikzpicture}[node distance=3cm,
+box/.style={rectangle,draw,minimum height=2cm,minimum width=2cm,line width=2pt},
+bad/.style={box,color=red},
+good/.style={box,color=green},
+report/.style={},
+missed/.style={report,color=red},
+found/.style={report,color=green}]
+\node[good] (a) {a} node[found,below=.5cm of a] {Yes};
+\node[good,right of=a] (b) {b} node[found,below=.5cm of b] {Yes};
+\node[good,right of=b] (c) {c} node[missed,below=.5cm of c] {No};
+\node[good,right of=c] (d) {d} node[found,below=.5cm of d] {Yes};
+\node[bad,right of=d] (e) {e} node[missed,below=.5cm of e] {No};
+\node[bad,right of=e] (f) {f} node[found,below=.5cm of f] {Yes};
+\node[bad,right of=f] (g) {g} node[found,below=.5cm of g] {Yes};
+\node[bad,right of=g] (h) {h} node[missed,below=.5cm of h] {No};
+\end{tikzpicture}
+
+\begin{pptWideOne}
+\begin{gather*}
+TP = \underline{\hspace{1cm}}
+\quad\quad
+FP = \underline{\hspace{1cm}}
+\quad\quad
+TN = \underline{\hspace{1cm}}
+\quad\quad
+FN = \underline{\hspace{1cm}}
+\\
+\text{Precision} = \frac{TP}{TP + FP} = \underline{\hspace{5cm}}
+\quad\quad
+\text{Recall} = \frac{TP}{TP + FN} = \underline{\hspace{5cm}}
+\\
+\text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN} = \underline{\hspace{5cm}}
+\\
+\end{gather*}
+\end{pptWideOne}
+
+\plush{}
+
+\plush{\pptChapter{Abstract Interpretation}}
+
+\plush{\pptChapter{Approximation}}
 
 \end{document}

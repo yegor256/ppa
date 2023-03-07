@@ -246,7 +246,7 @@ Which of them are losets:
 \begin{itemize}[label={}]
 \item \(\{ 1, -5, 2, 0, 42 \}\)
 \item \(\{ 3, 5, -9, 5, 12 \}\)
-\item \(\{ 3, 5, \text{"Hello"}, 12 \}\)
+\item \(\{ 3, 5, \texttt{"Hello"}, 12, 5.0 \}\)
 \item \(\{ x, y, z \}\)
 \item \(\varnothing\)
 \end{itemize}
@@ -262,7 +262,7 @@ Which of them are losets:
 Which of them are posets:
 
 \begin{itemize}[label={}]
-\item \(\{ 1, \text{"apple"}, 2, -7, \text{"orange"} \}\)
+\item \(\{ 1, \texttt{"apple"}, 2, -7, \texttt{"orange"} \}\)
 \item \(\{ 3, 5, -9, 5, 12 \}\)
 \item \(\{ 3, 5, 42, 12 \}\)
 \item \(\{ x, y, z \}\)
@@ -278,57 +278,57 @@ Which of them are posets:
 
 \begin{pptWide}{4}
 \(\{ 42, 2, 13 \}\)\par
-\begin{tikzpicture}[line width=1pt]
+\begin{tikzpicture}[line width=1pt,->]
 \node (a) {\(42\)};
 \node [below=1cm of a] (b) {\(13\)};
 \node [below=1cm of b] (c) {\(2\)};
-\draw (a) -- (b);
-\draw (b) -- (c);
+\draw (b) -- (a);
+\draw (c) -- (b);
 \end{tikzpicture}\par
 \(42 \sqcup 2 = 42\)
 \par\columnbreak\par
 \(\{ \texttt{A}, 7, 19, \texttt{B} \}\)\par
-\begin{tikzpicture}[line width=1pt]
+\begin{tikzpicture}[line width=1pt,->]
 \node (B) {\texttt{B}};
 \node [below=1cm of B] (A) {\texttt{A}};
 \node [right=1cm of B] (nineteen) {\(19\)};
 \node [below=1cm of nineteen] (seven) {\(7\)};
 \draw (A) -- (B);
-\draw (nineteen) -- (seven);
+\draw (seven) -- (nineteen);
 \end{tikzpicture}\par
 \(\texttt{A} \sqcup 7 = \varnothing\)
 \par\columnbreak\par
 \(\{ \texttt{A}, \top, 9, \texttt{B}, \bot \}\)\par
-\begin{tikzpicture}[line width=1pt]
+\begin{tikzpicture}[line width=1pt,->]
 \node (top) {\(\top\)};
 \node [below left=1cm of top] (B) {\texttt{B}};
 \node [below=1cm of B] (A) {\texttt{A}};
 \node [below right=1cm of top] (nine) {\(9\)};
 \node [below=4cm of top] (bot) {\(\bot\)};
-\draw (top) -- (B);
-\draw (top) -- (nine);
-\draw (B) -- (A);
-\draw (nine) -- (bot);
-\draw (A) -- (bot);
+\draw (B) -- (top);
+\draw (nine) -- (top);
+\draw (A) -- (B);
+\draw (bot) -- (nine);
+\draw (bot) -- (A);
 \end{tikzpicture}\par
 \(\texttt{A} \sqcup 9 = \top \quad \texttt{B} \sqcap 9 = \bot\)
 \par\columnbreak\par
 \(\{ \top, \bot, a, b, c, d \}\)\par
-\begin{tikzpicture}[line width=1pt]
+\begin{tikzpicture}[line width=1pt,->]
 \node (top) {\(\top\)};
 \node [below left=1cm of top] (a) {\(a\)};
 \node [below=1cm of a] (b) {\(b\)};
 \node [below right=1cm of top] (c) {\(c\)};
 \node [below=1cm of c] (d) {\(d\)};
 \node [below=4cm of top] (bot) {\(\bot\)};
-\draw (top) -- (a);
-\draw (top) -- (c);
-\draw (a) -- (b);
-\draw (a) -- (d);
-\draw (c) -- (d);
-\draw (c) -- (b);
-\draw (b) -- (bot);
-\draw (d) -- (bot);
+\draw (a) -- (top);
+\draw (c) -- (top);
+\draw (b) -- (a);
+\draw (d) -- (a);
+\draw (d) -- (c);
+\draw (b) -- (c);
+\draw (bot) -- (b);
+\draw (bot) -- (d);
 \end{tikzpicture}\par
 \(b \sqcup d = \varnothing \quad a \sqcap c = \varnothing\)
 \end{pptWide}
@@ -339,7 +339,7 @@ Which of them are posets:
 
 A lattice may be used to represent \emph{intervals} in a set of values, e.g. in \(\mathbb{Z}\):
 
-\begin{tikzpicture}[line width=1pt]
+\begin{tikzpicture}[line width=1pt,->]
 \node (top) {\((-\inf,+\inf)\)};
 \node [below left=1cm of top] (neg) {\((-\inf,0)\)};
 \node [below right=1cm and 6cm of top] (pos) {\((0,+\inf)\)};
@@ -348,16 +348,16 @@ A lattice may be used to represent \emph{intervals} in a set of values, e.g. in 
 \node [below right=1cm of pos] (even) {\(\{2, 4, 6, \dots\}\)};
 \node [below left=1cm and 2cm of even] (powers) {\(\{2, 4, 8, 16, \dots\}\)};
 \node [below=8cm of top] (bot) {\(\varnothing\)};
-\draw (top) -- (neg);
-\draw (top) -- (pos);
-\draw (top) -- (zero);
-\draw (pos) -- (odd);
-\draw (pos) -- (even);
-\draw (odd) -- (bot);
-\draw (even) -- (powers);
-\draw (powers) -- (bot);
-\draw (zero) -- (bot);
-\draw (neg) -- (bot);
+\draw (neg) -- (top);
+\draw (pos) -- (top);
+\draw (zero) -- (top);
+\draw (odd) -- (pos);
+\draw (even) -- (pos);
+\draw (bot) -- (odd);
+\draw (powers) -- (even);
+\draw (bot) -- (powers);
+\draw (bot) -- (zero);
+\draw (bot) -- (neg);
 \end{tikzpicture}\par
 
 Partial order is \(\in\).

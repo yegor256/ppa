@@ -52,7 +52,7 @@ Which properties are dynamic?
 
 \plush{}
 
-\pptSection{Rice's Theorem}
+\pptSection[Rice]{Rice's Theorem}
 
 \emph{Rice's theorem} states that all non-trivial semantic properties of programs are undecidable.
 
@@ -62,7 +62,7 @@ A property is \emph{non-trivial} if it is neither true for every partial computa
 
 \plush{}
 
-\pptSection{Non-trivial Properties}
+\pptSection[Non-trivial]{Non-trivial Properties}
 
 Examples of a non-trivial properties:
 
@@ -78,7 +78,7 @@ Suggest a few properties.
 
 \plush{}
 
-\pptSection{Static Analysis}
+\pptSection[Static]{Static Analysis}
 
 Consider two C++ programs given to a \emph{static analyzer} (e.g. \href{https://clang.llvm.org/extra/clang-tidy/}{Clang Tidy}):
 
@@ -105,7 +105,7 @@ Expected answers from Clang Tidy:
 
 \plush{}
 
-\pptSection{Style Checking}
+\pptSection[Style]{Style Checking}
 
 Consider two C++ programs given to a \emph{style checker} (e.g. \href{https://github.com/cpplint/cpplint}{cpplint}):
 
@@ -132,7 +132,7 @@ Expected answers from cpplint:
 
 \plush{}
 
-\pptSection{Dynamic Analysis}
+\pptSection[Dynamic]{Dynamic Analysis}
 
 Consider this C++ programs given to a \emph{dynamic analyzer}
 (\href{https://en.wikipedia.org/wiki/Code_sanitizer}{AddressSanitizer}):
@@ -248,7 +248,7 @@ FN = \underline{\hspace{1cm}}
 
 \emph{Lineary ordered set} (loset) is a set equipped with a total order.
 
-Which of them are losets:
+Which of them are losets?:
 
 \begin{itemize}[label={}]
 \item \(\{ 1, -5, 2, 0, 42 \}\)
@@ -266,12 +266,12 @@ Which of them are losets:
 
 \emph{Partially ordered set} (poset) is a set equipped with a partial order.
 
-Which of them are posets:
+Which of them are posets?:
 
 \begin{itemize}[label={}]
 \item \(\{ 1, \texttt{"apple"}, 2, -7, \texttt{"orange"} \}\)
 \item \(\{ 3, 5, -9, 5, 12 \}\)
-\item \(\{ 3, 5, 42, 12 \}\)
+\item \(\{ 0, 1, 2, 3, \dots \}\)
 \item \(\{ x, y, z \}\)
 \item \(\varnothing\)
 \end{itemize}
@@ -292,7 +292,7 @@ Which of them are posets:
 \draw (b) -- (a);
 \draw (c) -- (b);
 \end{tikzpicture}\par
-\(42 \sqcup 2 = 42\)
+\(42 \sqcup 2 = \dots\)
 \par\columnbreak\par
 \(\{ \texttt{A}, 7, 19, \texttt{B} \}\)\par
 \begin{tikzpicture}[line width=1pt,->]
@@ -303,7 +303,7 @@ Which of them are posets:
 \draw (A) -- (B);
 \draw (seven) -- (nineteen);
 \end{tikzpicture}\par
-\(\texttt{A} \sqcup 7 = \varnothing\)
+\(\texttt{A} \sqcup 7 = \dots\)
 \par\columnbreak\par
 \(\{ \texttt{A}, \top, 9, \texttt{B}, \bot \}\)\par
 \begin{tikzpicture}[line width=1pt,->]
@@ -317,8 +317,9 @@ Which of them are posets:
 \draw (A) -- (B);
 \draw (bot) -- (nine);
 \draw (bot) -- (A);
-\end{tikzpicture}\par
-\(\texttt{A} \sqcup 9 = \top \quad \texttt{B} \sqcap 9 = \bot\)
+\end{tikzpicture}\\
+\(\texttt{A} \sqcup 9 = \dots\)\\
+\(\texttt{B} \sqcap 9 = \dots\)
 \par\columnbreak\par
 \(\{ \top, \bot, a, b, c, d \}\)\par
 \begin{tikzpicture}[line width=1pt,->]
@@ -336,8 +337,9 @@ Which of them are posets:
 \draw (b) -- (c);
 \draw (bot) -- (b);
 \draw (bot) -- (d);
-\end{tikzpicture}\par
-\(b \sqcup d = \varnothing \quad a \sqcap c = \varnothing\)
+\end{tikzpicture}\\
+\(b \sqcup d = \dots\)\\
+\(a \sqcap c = \dots\)
 \end{pptWide}
 
 \plush{}
@@ -350,7 +352,7 @@ A lattice may be used to represent \emph{intervals} in a set of values, e.g. in 
 \node (top) {\((-\infty,+\infty)\)};
 \node [below left=1cm of top] (neg) {\((-\infty,0)\)};
 \node [below right=1cm and 6cm of top] (pos) {\((0,+\infty)\)};
-\node [below=1cm of top] (zero) {\(0\)};
+\node [below=1cm of top] (zero) {\(\{0\}\)};
 \node [below left=1cm of pos] (odd) {\(\{1, 3, 5, \dots\}\)};
 \node [below right=1cm of pos] (even) {\(\{2, 4, 6, \dots\}\)};
 \node [below left=1cm and 2cm of even] (powers) {\(\{2, 4, 8, 16, \dots\}\)};
@@ -373,7 +375,14 @@ Partial order is \(\in\).
 
 \plush{\pptChapter{Abstract Interpretation}}
 
-\pptSection{Over and Under Approximation}
+\pptSection[WTF]{What is it about?}
+
+There is a compromise to be made between the precision of the analysis and
+its decidability (computability), or tractability (computational cost).
+
+\plush{}
+
+\pptSection[Approximation]{Over and Under Approximation}
 
 What is the square of this oval?
 
@@ -382,18 +391,18 @@ What is the square of this oval?
 \draw [fill=orange!50,draw=none] (0,0) ellipse (4cm and 2cm);
 \node[line width=4pt,dashed,rectangle,draw,minimum width=9cm,minimum height=4.7cm] at (0,0) {};
 \end{tikzpicture}\par
-\textbf{Over}-approximation
+1)~\textbf{over}-approximation
 \par\columnbreak\par
 \begin{tikzpicture}[line width=2pt]
 \draw [fill=orange!50,draw=none] (0,0) ellipse (4cm and 2cm);
 \node[line width=4pt,dashed,rectangle,draw,minimum width=4.7cm,minimum height=2.8cm] at (0,0) {};
 \end{tikzpicture}\par
-\textbf{Under}-approximation
+2)~\textbf{under}-approximation
 \end{multicols}
 
 \plush{}
 
-\pptSection{Abstraction and Concretization}
+\pptSection[Functions]{Abstraction and Concretization}
 
 \begin{pptWide}{3}
 \emph{Concrete domain} \(C\) \\ \((\mathbb{Z}, <)\)\par
@@ -409,7 +418,7 @@ What is the square of this oval?
 \draw (e) -- (d);
 \end{tikzpicture}\par
 \par\columnbreak\par
-\emph{Abstract domain} \(A\) \\ \((\{s \vert \{ i \vert i \in \mathbb{N} \} \}, \in)\)\par
+\emph{Abstract domain} \(A\) \\ \((\{s \vert \{ n \vert n \in \mathbb{N} \} \}, \in)\)\par
 \begin{tikzpicture}[line width=1pt,->]
 \node (top) {\(\mathbb{N}\)};
 \node [below left=2cm of top] (2x) {\(2x\)};
@@ -441,29 +450,162 @@ Domains must be related through \emph{Galois connection}:
 
 \plush{}
 
+\pptSection[Transformers]{Abstract Semantics (Transformers)}
+
+\begin{pptWide}{3}
+\emph{Abstract domain}:\par
+\begin{tikzpicture}[line width=1pt,->]
+\node (top) {\(\mathbb{N}\)};
+\node [below left=2cm of top] (2x) {\(2x\)};
+\node [below right=2cm of top] (3x) {\(3x\)};
+\node [below=2cm of 2x] (pow) {\(2^x\)};
+\node [below=2cm of 3x] (6x) {\(6x\)};
+\node [below=7cm of top] (bot) {\(\varnothing\)};
+\draw (2x) -- (top);
+\draw (3x) -- (top);
+\draw (pow) -- (2x);
+\draw (6x) -- (3x);
+\draw (6x) -- (2x);
+\draw (bot) -- (pow);
+\draw (bot) -- (6x);
+\end{tikzpicture}\par
+\par\columnbreak\par
+Transformers:
+
+\(\mathbb{N} + \mathbb{N} = \dots\)
+
+\(2x + 2x = \dots\)
+
+\(2x + 3x = \dots\)
+
+\(2x \times 3x = \dots\)
+
+\(\varnothing + 2x = \dots\)
+
+\par\columnbreak\par
+Concrete counterparts:
+
+\(1024 + 1 = \dots\)
+
+\(46 + 4 = \dots\)
+
+\(8 + 9 = \dots\)
+
+\(6 \times 12 = \dots\)
+
+\(-1 + 4 = \dots\)
+\end{pptWide}
+
+\plush{}
+
+\pptSection[Widening]{Widening and Narrowing}
+
+\begin{pptWide}{2}
+\begin{tikzpicture}[line width=1pt,->]
+\node (top) {\(\top\)};
+\node [below left=6cm and 2cm of top] (e) {\(\mathcal{E}\)};
+\node [below right=1cm of top] (nn) {\(\mathbb{N}\)};
+\node [below right=1cm of nn] (n) {\(\mathbb{N}_+\)};
+\node [below left=1cm and 4cm of n] (zero) {\(0\)};
+\node [below left=1cm and 2cm of n] (1) {\(1\)};
+\node [below left=1cm and 0cm of n] (2) {\(2\)};
+\node [below left=1cm and -2cm of n] (3) {\(3\)};
+\node [below left=1cm and -4cm of n] (4) {\(4+\)};
+\node [below=8cm of top] (bot) {\(\bot\)};
+\draw (e) -- (top);
+\draw (nn) -- (top);
+\draw (zero) -- (nn);
+\draw (n) -- (nn);
+\draw (1) -- (n);
+\draw (2) -- (n);
+\draw (3) -- (n);
+\draw (4) -- (n);
+\draw (bot) -- (e);
+\draw (bot) -- (zero);
+\draw (bot) -- (1);
+\draw (bot) -- (2);
+\draw (bot) -- (3);
+\draw (bot) -- (4);
+\end{tikzpicture}\par
+\par\columnbreak\par
+\(0 \bigtriangledown 1 = \dots\)
+
+\(1 \bigtriangledown \mathbb{N}_+ = \dots\)
+
+\(0 \bigtriangledown \mathbb{N}_+ = \dots\)
+
+\(1 \bigtriangleup \mathbb{N}_+ = \dots\)
+
+\(0 \bigtriangleup 1 = \dots\)
+
+\(3 \bigtriangleup 4+ = \dots\)
+\end{pptWide}
+
+\plush{}
+
+\pptSection[Fixed-Point]{Fixed-Point Computation}
+
+\emph{Fixed-Point Computation} is a repeated symbolic execution of the program using abstract semantics
+until approximation reaches an \emph{equilibrium}.
+
+\begin{pptWide}{3}
 {\ttfamily
-int f(int x) \{
-  if (even) {
-    x / 2
-  }
-  return x / (log(x, 2) mod 2);
+int f(int x) \{ \\
+\quad while x > 0 \{ \\
+\quad \quad x = x - 1;\\
+\quad \quad x = 2 / x;\\
+\quad \}\\
+\quad return x;\\
 \}}
+\par\columnbreak\par
+\begin{tikzpicture}[graph]
+\node (start) {$\circ$};
+\node[terminal,below=1cm of start] (while) {x > 0}; \path (start) edge (while);
+\node[terminal,below=1cm of while] (minus) {x = x - 1}; \path (while) edge (minus);
+\node[terminal,below=1cm of minus] (div) {x = 2 / x}; \path (minus) edge (div);
+\node[left=2cm of minus] (exit) {$\circ$};
+\path (div.east) edge [bend right=90] (while.east);
+\path (while.west) edge (exit);
+\end{tikzpicture}
+\par\columnbreak\par
+\begin{tikzpicture}[line width=1pt,->]
+\node (top) {\(\top\)};
+\node [below left=6cm and 2cm of top] (e) {\(\mathcal{E}\)};
+\node [below right=0.5cm and 1cm of top] (nn) {\(\mathbb{N}\)};
+\node [below right=0.5cm and 1cm of nn] (n) {\(\mathbb{N}_+\)};
+\node [below left=1cm and 4cm of n] (zero) {\(0\)};
+\node [below left=1cm and 2cm of n] (1) {\(1\)};
+\node [below left=1cm and 0cm of n] (2) {\(2\)};
+\node [below left=1cm and -2cm of n] (3) {\(3\)};
+\node [below left=1cm and -4cm of n] (4) {\(4+\)};
+\node [below=7cm of top] (bot) {\(\bot\)};
+\draw (e) -- (top);
+\draw (nn) -- (top);
+\draw (zero) -- (nn);
+\draw (n) -- (nn);
+\draw (1) -- (n);
+\draw (2) -- (n);
+\draw (3) -- (n);
+\draw (4) -- (n);
+\draw (bot) -- (e);
+\draw (bot) -- (zero);
+\draw (bot) -- (1);
+\draw (bot) -- (2);
+\draw (bot) -- (3);
+\draw (bot) -- (4);
+\end{tikzpicture}\par
+\end{pptWide}
 
 \plush{}
 
-\pptSection{Abstract Semantics (Transformers)}
-
-\plush{}
-
-There is a compromise to be made between the precision of the analysis and
-its decidability (computability), or tractability (computational cost).
-
-\pptSection{Further Reading/Watching}
+\pptSection[Literature]{Further Reading/Watching}
 
 Lecture by Patrick Cousot, on \href{https://www.youtube.com/watch?v=IBlfJerAcRw}{YouTube}
 
 Mozilla wiki page on \href{https://wiki.mozilla.org/Abstract_Interpretation}{Abstract Interpretation}.
 
 \href{https://www.cs.utexas.edu/~isil/cs389L/AI-6up.pdf}{Slide deck} of I\c{s}il Dillig.
+
+\href{Introduction to Abstract Interpretation}{https://bblanche.gitlabpages.inria.fr/absint.pdf} by Bruno Blanchet.
 
 \end{document}

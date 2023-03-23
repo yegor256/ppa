@@ -22,6 +22,7 @@
 
 \documentclass{article}
 \usepackage{../ppa}
+\usepackage{booktabs}
 \newcommand*\thetitle{Data Flow Analysis}
 \newcommand*\thesubtitle{...}
 \begin{document}
@@ -30,10 +31,390 @@
 
 \pptToc
 
-\plush{\pptChapter{...}}
+\plush{\pptChapter[Example]{Motivating Example}}
 
-\pptSection{...}
+\pptBanner{Unassigned Variable}
 
-...
+Which code snippet has an error (``use of unassigned variable'')?
+
+\begin{multicols}{2}
+{\ttfamily
+int f(int x) \{ \\
+\quad  int a; \\
+\quad  if (x > 10) \\
+\quad\quad a = 42; \\
+\quad  while (x++ < 5) \\
+\quad\quad    a = x; \\
+\quad  return a + 1; \\
+\}}
+\par\columnbreak\par
+{\ttfamily
+int f(int x) \{ \\
+\quad  int a; \\
+\quad  if (x > 3) \\
+\quad\quad a = 42; \\
+\quad  while (x++ < 12) \\
+\quad\quad    a = x; \\
+\quad  return a + 1; \\
+\}}
+\end{multicols}
+
+\plush{}
+
+\pptBanner{ChatGPT vs. Clang Tidy}
+
+\begin{multicols}{2}
+\pptPic{0.85}{gpt.png}
+\par\columnbreak\par
+\pptPic{1}{tidy.png}
+\end{multicols}
+
+\plush{}
+
+\pptBanner{UndefinedBehaviorSanitizer}
+
+Clang \href{https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html}{UndefinedBehaviorSanitizer} (the dynamic analyzer) can detect the issue in runtime:
+
+% \pptPic{0.8}{clang.png}
+
+\plush{}
+
+\plush{\pptChapter{Method}}
+
+\pptSection[CFG]{Control Flow Graph}
+
+First, we represent the program as a Control Flow Graph (CFG):
+
+\begin{multicols}{2}
+{\ttfamily
+int f(int x) \{ \\
+\quad  int a; \\
+\quad  if (x > 10) \\
+\quad\quad a = 42; \\
+\quad  while (x++ < 5) \\
+\quad\quad    a = x; \\
+\quad  return a + 1; \\
+\}}
+\par\columnbreak\par
+\scalebox{.9}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (gt) {x > 10}; \path (start) edge (gt);
+\node[terminal,below right=1cm of gt] (42) {a = 42}; \path (gt) edge (42);
+\node[terminal,below left=1cm of 42] (while) {x++ < 5}; \path (42) edge (while); \path (gt) edge [bend right=15] (while);
+\node[terminal,below=1cm of while] (x) {a = x}; \path (while) edge (x);
+\node[terminal,below=1cm of x] (plus) {a + 1};
+\path (x.east) edge [bend right=90] (while.east);
+\path (while.west) edge [bend right=90] (plus.west);
+\end{tikzpicture}}
+\end{multicols}
+
+\plush{}
+
+\pptSection[Properties]{Six Properties of Data Flow Analysis}
+
+Data flow analysis \emph{propagates} information (\emph{data}) along the control flow graph, with the following six properties in mind:
+
+\begin{enumerate}
+    \item Domain (the \emph{data})
+    \item Direction (forward or backward)
+    \item \emph{Transfer Function} (sometimes with GEN and KILL sets)
+    \item \emph{Confluence Operator} ("meet" or "join")
+    \item Boundary Condition (start data for the entry node)
+    \item Initial Values (start data for each node)
+\end{enumerate}
+
+\plush{}
+
+\pptSection{Over-approximation}
+
+\begin{multicols}{2}
+\scalebox{.9}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (gt) {x > 10}; \path (start) edge (gt);
+\node[terminal,below right=1cm of gt] (42) {a := 42}; \path (gt) edge (42);
+\node[terminal,below left=1cm of 42] (while) {x++ < 5}; \path (42) edge (while); \path (gt) edge [bend right=15] (while);
+\node[terminal,below=1cm of while] (x) {a := x}; \path (while) edge (x);
+\node[terminal,below=1cm of x] (plus) {a + 1};
+\path (x.east) edge [bend right=90] (while.east);
+\path (while.west) edge [bend right=90] (plus.west);
+\end{tikzpicture}}
+\par\columnbreak\par
+\begin{enumerate}\small\setlength\itemsep{-3pt}
+    \item Domain:\\
+    variable names
+    \item Direction: \\
+    forward
+    \item Transfer Function: \\
+    add on ``:=''
+    \item Confluence Operator:\\
+    meet, intersection
+    \item Boundary Condition:\\
+    empty set
+    \item Initial Values:\\
+    empty sets
+\end{enumerate}
+\end{multicols}
+
+\plush{}
+
+\pptSection[Meet]{Meet Operator}
+
+The \emph{meet operator} is coming from the lattice that abstracts the data that flows (remember \emph{abstract interpretation}?):
+
+\begin{multicols}{2}
+\scalebox{.8}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (gt) {x > 10}; \path (start) edge (gt);
+\node[terminal,below right=1cm of gt] (42) {a := 42}; \path (gt) edge (42);
+\node[terminal,below left=1cm of 42] (while) {x++ < 5}; \path (42) edge (while); \path (gt) edge [bend right=15] (while);
+\node[terminal,below=1cm of while] (x) {a := x}; \path (while) edge (x);
+\node[terminal,below=1cm of x] (plus) {a + 1};
+\path (x.east) edge [bend right=90] (while.east);
+\path (while.west) edge [bend right=90] (plus.west);
+\end{tikzpicture}}
+\par\columnbreak\par
+\scalebox{.8}{\begin{tikzpicture}[line width=1pt,->]
+\node (top) {\(\{x, a\}\)};
+\node [below left=1cm of top] (x) {\(\{x\}\)};
+\node [below right=1cm of top] (a) {\(\{a\}\)};
+\node [below=3cm of top] (bot) {\(\{\}\)};
+\draw (x) -- (top);
+\draw (a) -- (top);
+\draw (bot) -- (x);
+\draw (bot) -- (a);
+\end{tikzpicture}}
+
+\( \{x, a\} \sqcap \{x\} \to \dots \)
+
+\( \{a\} \sqcap \{\} \to \dots \)
+
+\( \{a\} \sqcap \{x\} \to \dots \)
+\end{multicols}
+
+\plush{}
+
+\pptSection[GEN/KILL]{GEN and KILL Functions}
+
+A transfer function may be defined by defining \texttt{GEN} and \texttt{KILL} functions:
+
+\begin{multicols}{2}
+\scalebox{.8}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (gt) {x > 10}; \path (start) edge (gt);
+\node[terminal,below right=1cm of gt] (42) {a := 42}; \path (gt) edge (42);
+\node[terminal,below left=1cm of 42] (while) {x++ < 5}; \path (42) edge (while); \path (gt) edge [bend right=15] (while);
+\node[terminal,below=1cm of while] (x) {a := x}; \path (while) edge (x);
+\node[terminal,below=1cm of x] (plus) {a + 1};
+\path (x.east) edge [bend right=90] (while.east);
+\path (while.west) edge [bend right=90] (plus.west);
+\end{tikzpicture}}
+\par\columnbreak\par
+\begin{tabularx}{\columnwidth}{Xll}
+\toprule
+\(s\) & \(\texttt{GEN}(x)\) & \(\texttt{KILL}(x)\) \\
+\midrule
+\texttt{x > 10} & \(\{\}\) & \(\{\}\) \\
+\texttt{a := 42} & \(\{a\}\) & \(\{\}\) \\
+\texttt{x++ < 5} & \(\{\}\) & \(\{\}\) \\
+\texttt{a := x} & \(\{a\}\) & \(\{\}\) \\
+\texttt{a + 1} & \(\{\}\) & \(\{\}\) \\
+\bottomrule
+\end{tabularx}
+\end{multicols}
+
+\plush{}
+
+\pptSection[Low]{Over-approximation Means Low Precision}
+
+\begin{multicols}{3}
+\scalebox{.8}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (gt) {x > 10}; \path (start) edge (gt);
+\node[terminal,below right=1cm of gt] (42) {a := 42}; \path (gt) edge (42);
+\node[terminal,below left=1cm of 42] (while) {x++ < 5}; \path (42) edge (while); \path (gt) edge [bend right=15] (while);
+\node[terminal,below=1cm of while] (x) {a := x}; \path (while) edge (x);
+\node[terminal,below=1cm of x] (plus) {a + 1};
+\path (x.east) edge [bend right=90] (while.east);
+\path (while.west) edge [bend right=90] (plus.west);
+\end{tikzpicture}}
+\par\columnbreak\par
+\scalebox{.8}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (gt) {x > 3}; \path (start) edge (gt);
+\node[terminal,below right=1cm of gt] (42) {a := 42}; \path (gt) edge (42);
+\node[terminal,below left=1cm of 42] (while) {x++ < 12}; \path (42) edge (while); \path (gt) edge [bend right=15] (while);
+\node[terminal,below=1cm of while] (x) {a := x}; \path (while) edge (x);
+\node[terminal,below=1cm of x] (plus) {a + 1};
+\path (x.east) edge [bend right=90] (while.east);
+\path (while.west) edge [bend right=90] (plus.west);
+\end{tikzpicture}}
+\par\columnbreak\par
+\scalebox{.8}{\begin{tikzpicture}[line width=1pt,->]
+\node (top) {\(\{x, a\}\)};
+\node [below left=1cm of top] (x) {\(\{x\}\)};
+\node [below right=1cm of top] (a) {\(\{a\}\)};
+\node [below=3cm of top] (bot) {\(\{\}\)};
+\draw (x) -- (top);
+\draw (a) -- (top);
+\draw (bot) -- (x);
+\draw (bot) -- (a);
+\end{tikzpicture}}
+\end{multicols}
+
+\plush{}
+
+\pptSection[High]{Higher Precision}
+
+The \emph{precision} of analysis depends on the \emph{granularity} of the lattice:
+
+\begin{multicols}{2}
+\scalebox{.8}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (gt) {x > 3}; \path (start) edge (gt);
+\node[terminal,below right=1cm of gt] (42) {a := 42}; \path (gt) edge (42);
+\node[terminal,below left=1cm of 42] (while) {x++ < 12}; \path (42) edge (while); \path (gt) edge [bend right=15] (while);
+\node[terminal,below=1cm of while] (x) {a := x}; \path (while) edge (x);
+\node[terminal,below=1cm of x] (plus) {a + 1};
+\path (x.east) edge [bend right=90] (while.east);
+\path (while.west) edge [bend right=90] (plus.west);
+\end{tikzpicture}}
+\par\columnbreak\par
+\scalebox{.8}{\begin{tikzpicture}[line width=1pt,->]
+\node (top) {\(\{x, a\}\)};
+\node [below left=1cm of top] (x) {\(\{x\}\)};
+\node [below right=1cm of top] (a) {\(\{a\}\)};
+\node [below=3cm of top] (bot) {\(\{\}\)};
+\draw (x) -- (top);
+\draw (a) -- (top);
+\draw (bot) -- (x);
+\draw (bot) -- (a);
+\end{tikzpicture}}
+\end{multicols}
+
+\plush{}
+
+% Interprocedural vs itraprocedural
+
+\plush{\pptChapter[Types]{Most Common Types}}
+
+\pptSection[Reaching]{Reaching Definitions Analysis}
+
+\emph{Reaching definitions} is a data-flow analysis which statically determines which definitions may reach a given point in the code.
+
+\plush{}
+
+\pptSection[Liveness]{Liveness Analysis}
+
+\emph{Live variable analysis} calculates the variables that are live at each point in the program (they hold values that may be needed in the future).
+
+{\small
+\begin{ffcode}
+int price(int book_id) {
+  int p;
+  int discount;
+  if (book_id > 400)
+    discount = 10;
+  p = load_price_from_database(book_id);
+  p = ( p * 95 ) / 100;
+  return p;
+}
+\end{ffcode}
+}
+
+Do you see any problems in the code?
+
+\plush{}
+
+\pptSection[Assignment]{Definite Assignment Analysis}
+
+\emph{Definite assignment analysis} conservatively ensures that a variable or location is always assigned before it is used.
+
+{\small
+\begin{ffcode}
+int salary(int user_id) {
+  int s;
+  if (user_id > 400) {
+    s = get_salary_from_mysql(user_id);
+  } else if (user_id < 400) {
+    s = 0;
+  }
+  return s;
+}
+\end{ffcode}
+}
+
+Is there an error in this code?
+
+\plush{}
+
+\pptSection[Available]{Available Expression Analysis}
+
+\emph{Available expression analysis} determines for each point in the program the set of expressions that need not be recomputed.
+
+{\small
+\begin{ffcode}
+int price(int book_id) {
+  int p = 14;
+  if (stock(book_id) < 100) {
+    p = 19;
+  } else if (stock(book_id) > 1000) {
+    p = 9;
+  }
+  return p;
+}
+\end{ffcode}
+}
+
+Shall we computer \texttt{stock(book\_id)} twice?
+
+\plush{}
+
+\pptSection[Constants]{Constant Propagation Analysis}
+
+\emph{Constant propagation analysis} at every statement tells which variables is a constant:
+every execution that reaches that point, gives that variable the same value.
+
+{\small
+\begin{ffcode}
+float discount(float price) {
+  float d = 0.8;
+  if (p < 14.99)
+    d = 0.93;
+  else
+    d = d + 0.13;
+  return price * d;
+}
+\end{ffcode}
+}
+
+Is there an error in this code?
+
+\plush{}
+
+\plush{\pptChapter{Sensitivities}}
+
+\pptSection{Flow-Sensitive Analysis}
+
+A \emph{flow-sensitive} analysis takes into account the order of statements in a program.
+
+\plush{}
+
+\pptSection{Path-Sensitive Analysis}
+
+A \emph{path-sensitive} analysis computes different pieces of analysis information dependent on the predicates at conditional branch instructions.
+
+\plush{}
+
+\pptSection{Context-Sensitive Analysis}
+
+A \emph{context-sensitive} analysis is an interprocedural analysis that considers the calling context when analyzing the target of a function call.
+
+\plush{}
+
+\pptSection[Literature]{Further Reading/Watching}
+
+Book and \href{http://cs.au.dk/~amoeller/spa/}{slides} by Anders M\o{}ller et al.
+
+Lectures of Michael Pradel on \href{https://www.youtube.com/watch?v=rJYgTJaXZU0}{YouTube}.
 
 \end{document}

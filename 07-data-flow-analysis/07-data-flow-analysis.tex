@@ -75,7 +75,7 @@ int f(int x) \{ \\
 
 Clang \href{https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html}{UndefinedBehaviorSanitizer} (the dynamic analyzer) can detect the issue in runtime:
 
-% \pptPic{0.8}{clang.png}
+\pptPic{0.8}{clang.png}
 
 \plush{}
 
@@ -300,6 +300,22 @@ The \emph{precision} of analysis depends on the \emph{granularity} of the lattic
 \pptSection[Reaching]{Reaching Definitions Analysis}
 
 \emph{Reaching definitions} is a data-flow analysis which statically determines which definitions may reach a given point in the code.
+
+{\small
+\begin{ffcode}
+float price(int book) {
+  float p = load_from_database();
+  if (book < 100)
+    p = 14.99;
+  if (book > 50)
+    p = 9.99;
+  float discount = 0.90;
+  return p * discount;
+}
+\end{ffcode}
+}
+
+Do you see any problems with this code?
 
 \plush{}
 

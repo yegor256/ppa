@@ -79,6 +79,22 @@ Clang \href{https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html}{Undefin
 
 \plush{}
 
+\pptBanner{IntelliJ IDE}
+
+IntelliJ IDEA doesn't see the difference:
+
+\pptPic{0.8}{intellij.png}
+
+\plush{}
+
+\pptBanner{Java Compiler}
+
+\texttt{javac} doesn't see the difference either:
+
+\pptPic{0.8}{javac.png}
+
+\plush{}
+
 \plush{\pptChapter{Method}}
 
 \pptSection[CFG]{Control Flow Graph}
@@ -149,7 +165,7 @@ Data flow analysis \emph{propagates} information (\emph{data}) along the control
     \item Confluence Operator:\\
     meet, intersection
     \item Boundary Condition:\\
-    empty set
+    \(\{x\}\)
     \item Initial Values:\\
     empty sets
 \end{enumerate}
@@ -224,7 +240,7 @@ A transfer function may be defined by defining \texttt{GEN} and \texttt{KILL} fu
 
 \plush{}
 
-\pptSection[Low]{Over-approximation Means Low Precision}
+\pptSection[Low]{Over-approximation = Low Precision}
 
 \begin{multicols}{3}
 \scalebox{.8}{\begin{tikzpicture}[graph]
@@ -262,38 +278,6 @@ A transfer function may be defined by defining \texttt{GEN} and \texttt{KILL} fu
 \end{multicols}
 
 \plush{}
-
-\pptSection[High]{Higher Precision}
-
-The \emph{precision} of analysis depends on the \emph{granularity} of the lattice:
-
-\begin{multicols}{2}
-\scalebox{.8}{\begin{tikzpicture}[graph]
-\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
-\node[terminal,below=1cm of start] (gt) {x > 3}; \path (start) edge (gt);
-\node[terminal,below right=1cm of gt] (42) {a := 42}; \path (gt) edge (42);
-\node[terminal,below left=1cm of 42] (while) {x++ < 12}; \path (42) edge (while); \path (gt) edge [bend right=15] (while);
-\node[terminal,below=1cm of while] (x) {a := x}; \path (while) edge (x);
-\node[terminal,below=1cm of x] (plus) {a + 1};
-\path (x.east) edge [bend right=90] (while.east);
-\path (while.west) edge [bend right=90] (plus.west);
-\end{tikzpicture}}
-\par\columnbreak\par
-\scalebox{.8}{\begin{tikzpicture}[line width=1pt,->]
-\node (top) {\(\{x, a\}\)};
-\node [below left=1cm of top] (x) {\(\{x\}\)};
-\node [below right=1cm of top] (a) {\(\{a\}\)};
-\node [below=3cm of top] (bot) {\(\{\}\)};
-\draw (x) -- (top);
-\draw (a) -- (top);
-\draw (bot) -- (x);
-\draw (bot) -- (a);
-\end{tikzpicture}}
-\end{multicols}
-
-\plush{}
-
-% Interprocedural vs itraprocedural
 
 \plush{\pptChapter[Types]{Most Common Types}}
 

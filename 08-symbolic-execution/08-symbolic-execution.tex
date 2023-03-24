@@ -34,6 +34,37 @@
 
 \pptSection{...}
 
+
+\pptSection[High]{Higher Precision}
+
+The \emph{precision} of analysis depends on the \emph{granularity} of the lattice:
+
+\begin{pptWide}{2}
+\scalebox{.9}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (gt) {x > 3}; \path (start) edge (gt);
+\node[terminal,below right=1cm and 5cm of gt] (42) {a := 42}; \path (gt) edge node[note,near start] {yes} (42);
+\node[terminal,below=3cm of gt] (while) {x++ < 12}; \path (42) edge (while); \path (gt) edge [bend right=15] node[note,near start] {no}  (while);
+\node[terminal,below=3cm of while] (x) {a := x}; \path (while) edge node[note,near start] {yes} (x);
+\node[terminal,below left=2cm and 4cm of while] (plus) {a + 1};
+\path (x.east) edge [bend right=90] (while.east);
+\path (while) edge [bend right=10] node[note,near start] {no} (plus);
+\end{tikzpicture}}
+\par\columnbreak\par
+\scalebox{.9}{\begin{tikzpicture}[line width=1pt,->]
+\node (top) {\(\{x, a\}\)};
+\node [below left=1cm of top] (x) {\(\{x\}\)};
+\node [below right=1cm of top] (a) {\(\{a\}\)};
+\node [below=3cm of top] (bot) {\(\{\}\)};
+\draw (x) -- (top);
+\draw (a) -- (top);
+\draw (bot) -- (x);
+\draw (bot) -- (a);
+\end{tikzpicture}}
+\end{pptWide}
+
+\plush{}
+
 ...
 
 \end{document}

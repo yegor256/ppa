@@ -242,7 +242,7 @@ A transfer function may be defined by defining \texttt{GEN} and \texttt{KILL} fu
 
 \pptSection[Low]{Over-approximation = Low Precision}
 
-From the perspective of data flow analysis, there are bugs in both CFGs, but it's wrong:
+From the perspective of \emph{path insensitive} data flow analysis, there are bugs in both CFGs, but it's wrong:
 
 \begin{multicols}{3}
 \scalebox{.8}{\begin{tikzpicture}[graph]
@@ -278,6 +278,58 @@ From the perspective of data flow analysis, there are bugs in both CFGs, but it'
 \draw (bot) -- (a);
 \end{tikzpicture}}
 \end{multicols}
+
+\plush{}
+
+\plush{\pptChapter{Sensitivities}}
+
+\pptSection{Path-Sensitive Analysis}
+
+A \emph{path-sensitive} analysis computes different pieces of analysis information dependent on the \emph{predicates} at conditional branch instructions.
+
+\scalebox{.9}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (gt) {x > 3}; \path (start) edge (gt);
+\node[terminal,below right=1cm of gt] (42) {a := 42}; \path (gt) edge (42);
+\node[terminal,below left=1cm of 42] (while) {x++ < 12}; \path (42) edge (while); \path (gt) edge [bend right=15] (while);
+\node[terminal,below=1cm of while] (x) {a := x}; \path (while) edge (x);
+\node[terminal,below=1cm of x] (plus) {a + 1};
+\path (x.east) edge [bend right=90] (while.east);
+\path (while.west) edge [bend right=90] (plus.west);
+\end{tikzpicture}}
+
+\plush{}
+
+\pptSection{Flow-Sensitive Analysis}
+
+A \emph{flow-sensitive} analysis takes into account the order of statements in a program.
+
+The analysis we did before was flow sensitive. Flow \emph{insensitive} analysis example:
+
+{\small
+\begin{ffcode}
+a = 0;
+a = 5;
+a = a + 1;
+// What is a possible value of 'a'?
+\end{ffcode}
+}
+
+\plush{}
+
+\pptSection{Context-Sensitive Analysis}
+
+A \emph{context-sensitive} analysis is an interprocedural analysis that considers the calling context when analyzing the target of a function call.
+
+{\small
+\begin{ffcode}
+f(5, 6); // call-site #1
+f(6, 5); // call-site #2
+void f(x, y) {
+  // Is it possible to have x == y?
+}
+\end{ffcode}
+}
 
 \plush{}
 
@@ -390,26 +442,6 @@ float discount(float price) {
 }
 
 Is there an error in this code?
-
-\plush{}
-
-\plush{\pptChapter{Sensitivities}}
-
-\pptSection{Flow-Sensitive Analysis}
-
-A \emph{flow-sensitive} analysis takes into account the order of statements in a program.
-
-\plush{}
-
-\pptSection{Path-Sensitive Analysis}
-
-A \emph{path-sensitive} analysis computes different pieces of analysis information dependent on the predicates at conditional branch instructions.
-
-\plush{}
-
-\pptSection{Context-Sensitive Analysis}
-
-A \emph{context-sensitive} analysis is an interprocedural analysis that considers the calling context when analyzing the target of a function call.
 
 \plush{}
 

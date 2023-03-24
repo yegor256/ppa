@@ -24,7 +24,7 @@
 \usepackage{../ppa}
 \usepackage{booktabs}
 \newcommand*\thetitle{Data Flow Analysis}
-\newcommand*\thesubtitle{...}
+\newcommand*\thesubtitle{Example, Method, Lattice, Precision, Sensitivity}
 \begin{document}
 
 \plush{\innoTitlePage{7}}
@@ -131,7 +131,7 @@ int f(int x) \{ \\
 Data flow analysis \emph{propagates} information (\emph{data}) along the control flow graph, with the following six properties in mind:
 
 \begin{enumerate}
-    \item Domain (the \emph{data})
+    \item Domain (of \emph{data flow facts})
     \item Direction (forward or backward)
     \item \emph{Transfer Function} (sometimes with GEN and KILL sets)
     \item \emph{Confluence Operator} ("meet" or "join")
@@ -241,6 +241,8 @@ A transfer function may be defined by defining \texttt{GEN} and \texttt{KILL} fu
 \plush{}
 
 \pptSection[Low]{Over-approximation = Low Precision}
+
+From the perspective of data flow analysis, there are bugs in both CFGs, but it's wrong:
 
 \begin{multicols}{3}
 \scalebox{.8}{\begin{tikzpicture}[graph]

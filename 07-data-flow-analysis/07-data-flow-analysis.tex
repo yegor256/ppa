@@ -227,7 +227,7 @@ A transfer function may be defined by defining \texttt{GEN} and \texttt{KILL} fu
 \par\columnbreak\par
 \begin{tabularx}{\columnwidth}{Xll}
 \toprule
-\(s\) & \(\texttt{GEN}(x)\) & \(\texttt{KILL}(x)\) \\
+\(s\) & \(\texttt{GEN}(s)\) & \(\texttt{KILL}(s)\) \\
 \midrule
 \texttt{x > 10} & \(\{\}\) & \(\{\}\) \\
 \texttt{a := 42} & \(\{a\}\) & \(\{\}\) \\
@@ -432,7 +432,7 @@ every execution that reaches that point, gives that variable the same value.
 \begin{ffcode}
 float discount(float price) {
   float d = 0.8;
-  if (p < 14.99)
+  if (price < 14.99)
     d = 0.93;
   else
     d = d + 0.13;

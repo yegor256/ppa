@@ -30,38 +30,199 @@
 
 \pptToc
 
-\plush{\pptChapter{...}}
+\plush{\pptChapter{In Theory}}
 
-\pptSection{...}
+\pptSection[CFG]{Control Flow Graph}
 
-
-\pptSection[High]{Higher Precision}
-
-The \emph{precision} of analysis depends on the \emph{granularity} of the lattice:
-
-\begin{pptWide}{2}
+\begin{multicols}{2}
+{\ttfamily
+int f(int x) \{ \\
+\quad  int a = x * 2; \\
+\quad  a = a - 4; \\
+\quad  if (a == 0) \\
+\quad\quad error("Div by zero!"); \\
+\quad  return 42 / a; \\
+\}}
+\par\columnbreak\par
 \scalebox{.9}{\begin{tikzpicture}[graph]
 \node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
-\node[terminal,below=1cm of start] (gt) {x > 3}; \path (start) edge (gt);
-\node[terminal,below right=1cm and 5cm of gt] (42) {a := 42}; \path (gt) edge node[note,near start] {yes} (42);
-\node[terminal,below=3cm of gt] (while) {x++ < 12}; \path (42) edge (while); \path (gt) edge [bend right=15] node[note,near start] {no}  (while);
-\node[terminal,below=3cm of while] (x) {a := x}; \path (while) edge node[note,near start] {yes} (x);
-\node[terminal,below left=2cm and 4cm of while] (plus) {a + 1};
-\path (x.east) edge [bend right=90] (while.east);
-\path (while) edge [bend right=10] node[note,near start] {no} (plus);
+\node[terminal,below=1cm of start] (mul) {\texttt{a := x * 2}}; \path (start) edge (mul);
+\node[terminal,below=1cm of mul] (minus) {\texttt{a := a - 4}}; \path (mul) edge (minus);
+\node[terminal,below=1cm of minus] (if) {\texttt{a == 0}}; \path (minus) edge (if);
+\node[terminal,below right=2cm of if] (error) {\texttt{error}}; \path (if) edge (error);
+\node[terminal,below=3cm of if] (return) {\texttt{42 / a}};
+\path (if) edge [bend right=30] (return);
 \end{tikzpicture}}
+\end{multicols}
+
+\plush{}
+
+\pptSection[Feasibility]{Path Feasibility}
+
+A path is \emph{feasible} if there exists an input $\mathcal{I}$ to the program that covers the path; i.e., when program is executed with $\mathcal{I}$ as input, the path is taken.
+
+\begin{multicols}{2}
+{\ttfamily
+int f(int x) \{ \\
+\quad  int a = x * 2; \\
+\quad  a = a - 4; \\
+\quad  if (a == 0) \\
+\quad\quad error("Div by zero!"); \\
+\quad  return 42 / a; \\
+\}}
 \par\columnbreak\par
-\scalebox{.9}{\begin{tikzpicture}[line width=1pt,->]
-\node (top) {\(\{x, a\}\)};
-\node [below left=1cm of top] (x) {\(\{x\}\)};
-\node [below right=1cm of top] (a) {\(\{a\}\)};
-\node [below=3cm of top] (bot) {\(\{\}\)};
-\draw (x) -- (top);
-\draw (a) -- (top);
-\draw (bot) -- (x);
-\draw (bot) -- (a);
+\scalebox{.8}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (mul) {\texttt{a := x * 2}}; \path (start) edge[line width=5pt] (mul);
+\node[terminal,below=1cm of mul] (minus) {\texttt{a := a - 4}}; \path (mul) edge[line width=5pt] (minus);
+\node[terminal,below=1cm of minus] (if) {\texttt{a == 0}}; \path (minus) edge[line width=5pt] (if);
+\node[terminal,below right=2cm of if] (error) {\texttt{error}}; \path (if) edge[line width=5pt] (error);
+\node[terminal,below=3cm of if] (return) {\texttt{42 / a}};
+\path (if) edge [bend right=30] (return);
 \end{tikzpicture}}
-\end{pptWide}
+\end{multicols}
+
+\plush{}
+
+\pptSection[Infeasible]{Infeasible Path}
+
+A path is \emph{infeasible} if there exists no input $\mathcal{I}$ that covers the path.
+
+\begin{multicols}{2}
+{\ttfamily
+int f(int x) \{ \\
+\quad  int a = x * x; \\
+\quad  if (a < 0) \\
+\quad\quad error("Too small!"); \\
+\quad  return 42 / a; \\
+\}}
+\par\columnbreak\par
+\scalebox{1}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (mul) {\texttt{a := x * x}}; \path (start) edge[line width=5pt] (mul);
+\node[terminal,below=1cm of mul] (if) {\texttt{a < 0}}; \path (mul) edge[line width=5pt] (if);
+\node[terminal,below right=2cm of if] (error) {\texttt{error}}; \path (if) edge[line width=5pt] (error);
+\node[terminal,below=3cm of if] (return) {\texttt{42 / a}};
+\path (if) edge [bend right=30] (return);
+\end{tikzpicture}}
+\end{multicols}
+
+\plush{}
+
+\pptSection{Symbols}
+
+\begin{multicols}{2}
+{\ttfamily
+int f(int x) \{ \\
+\quad  int a = x * 2; \\
+\quad  a = a - 4; \\
+\quad  if (a == 0) \\
+\quad\quad error("Div by zero!"); \\
+\quad  return 42 / a; \\
+\}}
+\par\columnbreak\par
+\scalebox{.9}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (mul) {\texttt{a := x * 2}}; \path (start) edge[line width=5pt] node[note,right] {$x \mapsto X$} (mul);
+\node[terminal,below=1cm of mul] (minus) {\texttt{a := a - 4}}; \path (mul) edge[line width=5pt] node[note,right] {$x \mapsto X, a \mapsto 2X$} (minus);
+\node[terminal,below=1cm of minus] (if) {\texttt{a == 0}}; \path (minus) edge[line width=5pt] node[note,right] {$x \mapsto X, a \mapsto 2X - 4$} (if);
+\node[terminal,below right=2cm of if] (error) {\texttt{error}}; \path (if) edge[line width=5pt] node[note,right=1cm] {$x \mapsto X, a \mapsto 2X - 4$} (error);
+\node[terminal,below=3cm of if] (return) {\texttt{42 / a}};
+\path (if) edge [bend right=30] (return);
+\end{tikzpicture}}
+\end{multicols}
+
+\plush{}
+
+\pptSection[PC]{Path Conditions}
+
+\emph{Path condition} is a condition on the input symbols such that if a path is feasible its path-condition is satisfiable.
+
+\begin{multicols}{2}
+{\ttfamily
+int f(int x) \{ \\
+\quad  int a = x * 2; \\
+\quad  a = a - 4; \\
+\quad  if (a == 0) \\
+\quad\quad error("Div by zero!"); \\
+\quad  return 42 / a; \\
+\}}
+\par\columnbreak\par
+\scalebox{.8}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (mul) {\texttt{a := x * 2}}; \path (start) edge[line width=5pt] node[note,right] {$x \mapsto X$} node[note,left] {$\textbf{tt}$} (mul);
+\node[terminal,below=1cm of mul] (minus) {\texttt{a := a - 4}}; \path (mul) edge[line width=5pt] node[note,right] {$x \mapsto X, a \mapsto 2X$} node[note,left] {$\textbf{tt}$} (minus);
+\node[terminal,below=1cm of minus] (if) {\texttt{a == 0}}; \path (minus) edge[line width=5pt] node[note,right] {$x \mapsto X, a \mapsto 2X - 4$} node[note,left] {$\textbf{tt}$} (if);
+\node[terminal,below right=2cm of if] (error) {\texttt{error}}; \path (if) edge[line width=5pt] node[note,right=1cm] {$x \mapsto X, a \mapsto 2X - 4$} node[note,left=1cm] {$2X - 4 = 0$} (error);
+\node[terminal,below=3cm of if] (return) {\texttt{42 / a}};
+\path (if) edge [bend right=30] (return);
+\end{tikzpicture}}
+\end{multicols}
+
+\plush{}
+
+\pptSection[Solver]{Constraint Solver}
+
+A \emph{constraint solver} is a tool that finds satisfying assignments for a \emph{constraint}, if it is satisfiable.
+
+A \emph{solution} of the constraint is a set of assignments, one for each free variable that makes the constraint satisfiable.
+
+Constraint:
+\begin{gather*}
+x \mapsto X, \; a \mapsto 2X - 4 \\
+2X - 4 = 0
+\end{gather*}
+
+Solution:
+\begin{gather*}
+X = 2
+\end{gather*}
+
+\plush{}
+
+\plush{\pptChapter{In Practice}}
+
+\pptSection{SAT Solvers}
+
+\emph{SAT solver} is a computer program which aims to solve the \emph{Boolean satisfiability problem}: whether the variables of a given Boolean formula can be consistently replaced by the values TRUE or FALSE in such a way that the formula evaluates to TRUE.
+
+Examples:
+
+\begin{equation*}
+\begin{split}
+a \wedge b \to \dots \\
+a \wedge b \wedge \neg a \to \dots \\
+a \vee b \vee \neg a \to \dots \\
+a \wedge ( \textbf{ff} \vee \textbf{tt} ) \to \dots \\
+\end{split}
+\end{equation*}
+
+All expressions are in Boolean logic.
+
+\plush{}
+
+\pptSection{SMT Solvers}
+
+\emph{SMT solver} is a computer program which aims to solve the \emph{satisfiability modulo theories}: determine whether a mathematical formula is satisfiable.
+
+Examples:
+
+\begin{equation*}
+\begin{split}
+a < 5 \wedge a > 3 \to \dots \\
+a < 5 \wedge f(a) > 42 \to \dots \\
+a < 5 \vee a > 10 \vee \neg a \to \dots \\
+a \wedge \textbf{ff} \wedge x = 7 \to \dots \\
+\end{split}
+\end{equation*}
+
+SMT solvers: Z3, cvc5, Yices, and many more...
+
+\plush{}
+
+\plush{\pptChapter{Concolic Execution}}
+
+\pptSection[...]{...}
 
 \plush{}
 

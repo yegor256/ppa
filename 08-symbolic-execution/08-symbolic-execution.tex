@@ -62,14 +62,16 @@ int f(int x) \{ \\
 A path is \emph{feasible} if there exists an input $\mathcal{I}$ to the program that covers the path; i.e., when program is executed with $\mathcal{I}$ as input, the path is taken.
 
 \begin{multicols}{2}
-{\ttfamily
-int f(int x) \{ \\
-\quad  int a = x * 2; \\
-\quad  a = a - 4; \\
-\quad  if (a == 0) \\
-\quad\quad error("Div by zero!"); \\
-\quad  return 42 / a; \\
-\}}
+{\begin{verbatim}
+int f(int x) {
+  int a = x * 2;
+  a = a - 4;
+  if (a == 0)
+    error("Div by zero!");
+  return 42 / a;
+}
+\end{verbatim}
+}
 \par\columnbreak\par
 \scalebox{.8}{\begin{tikzpicture}[graph]
 \node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
@@ -89,21 +91,23 @@ int f(int x) \{ \\
 A path is \emph{infeasible} if there exists no input $\mathcal{I}$ that covers the path.
 
 \begin{multicols}{2}
-{\ttfamily
-int f(int x) \{ \\
-\quad  int a = x * x; \\
-\quad  if (a < 0) \\
-\quad\quad error("Too small!"); \\
-\quad  return 42 / a; \\
-\}}
+{\begin{verbatim}
+int f(int x) {
+  int a = x * x;
+  if (a < 0)
+    error("Too small!");
+  return 42 / a;
+}
+\end{verbatim}
+}
 \par\columnbreak\par
 \scalebox{1}{\begin{tikzpicture}[graph]
 \node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
-\node[terminal,below=1cm of start] (mul) {\texttt{a := x * x}}; \path (start) edge[line width=5pt] (mul);
-\node[terminal,below=1cm of mul] (if) {\texttt{a < 0}}; \path (mul) edge[line width=5pt] (if);
-\node[terminal,below right=2cm of if] (error) {\texttt{error}}; \path (if) edge[line width=5pt] (error);
+\node[terminal,below=1cm of start] (mul) {\texttt{a := x * x}}; \path (start) edge[line width=5pt] node[note,right] {a} (mul);
+\node[terminal,below=1cm of mul] (if) {\texttt{a < 0}}; \path (mul) edge[line width=5pt] node[note,right] {b} (if);
+\node[terminal,below right=2cm of if] (error) {\texttt{error}}; \path (if) edge[line width=5pt] node[note,right] {c} (error);
 \node[terminal,below=3cm of if] (return) {\texttt{42 / a}};
-\path (if) edge [bend right=30] (return);
+\path (if) edge [bend right=30] node[note,right] {d} (return);
 \end{tikzpicture}}
 \end{multicols}
 
@@ -112,14 +116,16 @@ int f(int x) \{ \\
 \pptSection{Symbols}
 
 \begin{multicols}{2}
-{\ttfamily
-int f(int x) \{ \\
-\quad  int a = x * 2; \\
-\quad  a = a - 4; \\
-\quad  if (a == 0) \\
-\quad\quad error("Div by zero!"); \\
-\quad  return 42 / a; \\
-\}}
+{\begin{verbatim}
+int f(int x) {
+  int a = x * 2;
+  a = a - 4;
+  if (a == 0)
+    error("Div by zero!");
+  return 42 / a;
+}
+\end{verbatim}
+}
 \par\columnbreak\par
 \scalebox{.9}{\begin{tikzpicture}[graph]
 \node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
@@ -139,14 +145,16 @@ int f(int x) \{ \\
 \emph{Path condition} is a condition on the input symbols such that if a path is feasible its path-condition is satisfiable.
 
 \begin{multicols}{2}
-{\ttfamily
-int f(int x) \{ \\
-\quad  int a = x * 2; \\
-\quad  a = a - 4; \\
-\quad  if (a == 0) \\
-\quad\quad error("Div by zero!"); \\
-\quad  return 42 / a; \\
-\}}
+{\begin{verbatim}
+int f(int x) {
+  int a = x * 2;
+  a = a - 4;
+  if (a == 0)
+    error("Div by zero!");
+  return 42 / a;
+}
+\end{verbatim}
+}
 \par\columnbreak\par
 \scalebox{.8}{\begin{tikzpicture}[graph]
 \node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
@@ -182,7 +190,7 @@ X = 2
 
 \plush{\pptChapter{In Practice}}
 
-\pptSection{SAT Solvers}
+\pptSection[SAT]{SAT Solvers}
 
 \emph{SAT solver} is a computer program which aims to solve the \emph{Boolean satisfiability problem}: whether the variables of a given Boolean formula can be consistently replaced by the values TRUE or FALSE in such a way that the formula evaluates to TRUE.
 
@@ -201,7 +209,7 @@ All expressions are in Boolean logic.
 
 \plush{}
 
-\pptSection{SMT Solvers}
+\pptSection[SMT]{SMT Solvers}
 
 \emph{SMT solver} is a computer program which aims to solve the \emph{satisfiability modulo theories}: determine whether a mathematical formula is satisfiable.
 
@@ -217,6 +225,204 @@ a \wedge \textbf{ff} \wedge x = 7 \to \dots \\
 \end{equation*}
 
 SMT solvers: Z3, cvc5, Yices, and many more...
+
+\plush{}
+
+\pptSection[Explosion]{Path Explosion}
+
+\emph{Path explosion} refers to the fact that the number of control-flow paths in a program grows exponentially with an increase in program size and can even be infinite in the case of programs with unbounded loop iterations.
+
+\begin{pptWide}{2}
+{\small\begin{verbatim}
+int a = 0;
+for (int i = 10; i >= 0; i--) {
+  a += 42 / i;
+}
+\end{verbatim}
+}
+\par\columnbreak\par
+\scalebox{.7}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (zero) {\texttt{a := 0}}; \path (start) edge node[note,right] {a} (zero);
+\node[terminal,below=1cm of zero] (for) {\texttt{i := 10}}; \path (zero) edge node[note,right] {b} (for);
+\node[terminal,below=1cm of for] (gte) {\texttt{i >= 0}}; \path (for) edge node[note,right] {c} (gte);
+\node[terminal,below right=1cm and 3cm of gte] (div) {\texttt{a += 42 / i}}; \path (gte) edge node[note,right] {d} (div);
+\node[terminal,below left=1cm and 2cm of div] (minus) {\texttt{i-{}-}}; \path (div) edge node[note,right] {e} (minus);
+\node[terminal,right=2cm of div] (error) {\texttt{error!}}; \path (div) edge node[note,right] {f} (error);
+\node[draw=none,minimum width=0pt,inner sep=0pt, below left=3cm and 3cm of gte] (exit) {$\circ$};
+\path (minus) edge[bend left=30] node[note,right] {g} (gte);
+\path (gte) edge[bend right=30] node[note,right] {h} (exit);
+\end{tikzpicture}}
+\end{pptWide}
+
+\plush{}
+
+\pptSection[ChatGPT]{Clang Tidy vs. ChatGPT}
+
+\begin{multicols}{2}
+\pptPic{.85}{loop-tidy.png}
+\par\columnbreak\par
+\pptPic{0.9}{loop-gpt.png}
+\end{multicols}
+
+\plush{}
+
+\pptSection[CSA]{Clang Tidy vs. Clang Static Analyzer}
+
+{\scriptsize\begin{verbatim}
+$ cat a.cpp
+int main() {
+  int a = 0;
+  for (int i = 10; i >= 0; i--) {
+    a += 42 / i;
+  }
+  return a;
+}
+$ clang --analyze -Xclang -analyzer-constraints=z3 -Xclang -analyzer-max-loop -Xclang 5 a.cpp
+$ clang --analyze -Xclang -analyzer-constraints=z3 -Xclang -analyzer-max-loop -Xclang 15 a.cpp
+a.cpp:4:13: warning: Division by zero [core.DivideZero]
+    a += 42 / i;
+         ~~~^~~
+1 warning generated.
+\end{verbatim}
+
+\plush{}
+
+\plush{\pptChapter{Test Generation}}
+
+\pptSection[Input]{Symbolic Input}
+
+\begin{pptWide}{2}
+{\scriptsize\begin{verbatim}
+#include <climits>
+#include "stdlib.h"
+int f(int x) {
+  int a = x * 2;
+  a = a - 4;
+  if (a == 0)
+    exit(-1);
+  return 42 / a;
+}
+int main(int argc, char** argv) {
+  int x = atoi(argv[1]);
+  return f(x);
+}
+\end{verbatim}
+}
+\par\columnbreak\par
+{\ttfamily\scriptsize
+\#include <climits> \\
+\#include "stdlib.h" \\
+{\color{red}\#include "klee/klee.h"} \\
+int f(int x) \{ \\
+\quad  int a = x * 2; \\
+\quad  a = a - 4; \\
+\quad  if (a == 0) \\
+\quad\quad    exit(-1); \\
+\quad  return 42 / a; \\
+\} \\
+int main(int argc, char** argv) \{ \\
+{\color{red}
+\quad  int x; \\
+\quad  klee\_make\_symbolic(\&x, sizeof(x), "x");} \\
+\quad  return f(x); \\
+\}}
+\end{pptWide}
+
+\plush{}
+
+\pptSection[Bitcode]{Compile to LLVM Bitcode}
+
+{\scriptsize\begin{verbatim}
+$ clang -I /opt/homebrew/Cellar/klee/2.3\_4/include -c -g \
+  -emit-llvm -O0 -Xclang -disable-O0-optnone a.cpp
+
+$ klee a.bc
+KLEE: output directory is "/code/tmp/cpp/klee-out-2"
+KLEE: Using STP solver backend
+KLEE: done: total instructions = 38
+KLEE: done: completed paths = 2
+KLEE: done: partially completed paths = 0
+KLEE: done: generated tests = 2
+
+$ ls -al klee-out-0/*.ktest
+-rw-r--r--   1 yb  staff    46 Apr  7 17:30 test000001.ktest
+-rw-r--r--   1 yb  staff    46 Apr  7 17:30 test000002.ktest
+\end{verbatim}
+}
+
+\plush{}
+
+\pptSection[TCs]{Test Cases}
+
+\begin{pptWide}{3}
+{\tiny\begin{verbatim}
+#include <climits>
+#include "stdlib.h"
+#include "klee/klee.h"
+int f(int x) {
+  int a = x * 2;
+  a = a - 4;
+  if (a == 0)
+    exit(-1);
+  return 42 / a;
+}
+int main(int argc, char** argv) {
+  int x;
+  klee_make_symbolic(&x, sizeof(x), "x");
+  return f(x);
+}
+\end{verbatim}
+}
+\par\columnbreak\par
+{\tiny\begin{verbatim}
+$ ktest-tool klee-last/test000001.ktest
+ktest file : 'klee-last/test000001.ktest'
+args       : ['a.bc']
+num objects: 1
+object 0: name: 'x'
+object 0: size: 4
+object 0: data: b'\x02\x00\x00\x00'
+object 0: hex : 0x02000000
+object 0: int : 2
+object 0: uint: 2
+object 0: text: ....
+\end{verbatim}
+}
+\par\columnbreak\par
+{\tiny\begin{verbatim}
+$ ktest-tool klee-last/test000002.ktest
+ktest file : 'klee-last/test000002.ktest'
+args       : ['a.bc']
+num objects: 1
+object 0: name: 'x'
+object 0: size: 4
+object 0: data: b'\x00\x00\x00\x00'
+object 0: hex : 0x00000000
+object 0: int : 0
+object 0: uint: 0
+object 0: text: ....
+\end{verbatim}
+}
+\end{pptWide}
+
+\plush{}
+
+\pptSection[Replay]{Replaying Test Cases}
+
+{\scriptsize\begin{verbatim}
+$ export LD_LIBRARY_PATH=/opt/homebrew/Cellar/klee/2.3_4/lib:$LD_LIBRARY_PATH
+
+$ clang -I /opt/homebrew/Cellar/klee/2.3_4/include -L/opt/homebrew/Cellar/klee/2.3_4/lib \
+  -lkleeRuntest -Xclang -disable-O0-optnone a.cpp
+
+$ KTEST_FILE=klee-last/test000001.ktest ./a.out ; echo $?
+255
+
+$ KTEST_FILE=klee-last/test000002.ktest ./a.out ; echo $?
+246
+\end{verbatim}
+}
 
 \plush{}
 

@@ -278,6 +278,7 @@ int main() {
   }
   return a;
 }
+$ clang-tidy a.cpp --
 $ clang --analyze -Xclang -analyzer-constraints=z3 -Xclang -analyzer-max-loop -Xclang 5 a.cpp
 $ clang --analyze -Xclang -analyzer-constraints=z3 -Xclang -analyzer-max-loop -Xclang 15 a.cpp
 a.cpp:4:13: warning: Division by zero [core.DivideZero]

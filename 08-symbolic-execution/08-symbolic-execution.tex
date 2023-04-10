@@ -23,7 +23,7 @@
 \documentclass{article}
 \usepackage{../ppa}
 \newcommand*\thetitle{Symbolic Execution}
-\newcommand*\thesubtitle{Theory, Limitations, Test Generation, Concolic Testing}
+\newcommand*\thesubtitle{Theory, Limitations, Tests, Concolic Testing}
 \begin{document}
 
 \plush{\innoTitlePage{8}}
@@ -105,7 +105,7 @@ int f(int x) {
 \node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
 \node[terminal,below=1cm of start] (mul) {\texttt{a := x * x}}; \path (start) edge[line width=5pt] node[note,right] {a} (mul);
 \node[terminal,below=1cm of mul] (if) {\texttt{a < 0}}; \path (mul) edge[line width=5pt] node[note,right] {b} (if);
-\node[terminal,below right=2cm of if] (error) {\texttt{error}}; \path (if) edge[line width=5pt] node[note,right] {c} (error);
+\node[terminal,below right=2cm of if] (error) {\texttt{error}}; \path (if) edge[line width=5pt] node[note,above right] {c} (error);
 \node[terminal,below=3cm of if] (return) {\texttt{42 / a}};
 \path (if) edge [bend right=30] node[note,right] {d} (return);
 \end{tikzpicture}}
@@ -144,7 +144,7 @@ int f(int x) {
 
 \emph{Path condition} is a condition on the input symbols such that if a path is feasible its path-condition is satisfiable.
 
-\begin{multicols}{2}
+\begin{pptWide}{2}
 {\begin{verbatim}
 int f(int x) {
   int a = x * 2;
@@ -161,11 +161,11 @@ int f(int x) {
 \node[terminal,below=1cm of start] (mul) {\texttt{a := x * 2}}; \path (start) edge[line width=5pt] node[note,right] {$x \mapsto X$} node[note,left] {$\textbf{tt}$} (mul);
 \node[terminal,below=1cm of mul] (minus) {\texttt{a := a - 4}}; \path (mul) edge[line width=5pt] node[note,right] {$x \mapsto X, a \mapsto 2X$} node[note,left] {$\textbf{tt}$} (minus);
 \node[terminal,below=1cm of minus] (if) {\texttt{a == 0}}; \path (minus) edge[line width=5pt] node[note,right] {$x \mapsto X, a \mapsto 2X - 4$} node[note,left] {$\textbf{tt}$} (if);
-\node[terminal,below right=2cm of if] (error) {\texttt{error}}; \path (if) edge[line width=5pt] node[note,right=1cm] {$x \mapsto X, a \mapsto 2X - 4$} node[note,left=1cm] {$2X - 4 = 0$} (error);
-\node[terminal,below=3cm of if] (return) {\texttt{42 / a}};
+\node[terminal,below right=3cm and 2cm of if] (error) {\texttt{error}}; \path (if) edge[line width=5pt] [bend left=30] node[note,right=.5cm] {$x \mapsto X, a \mapsto 2X - 4$} node[note,left=.5cm] {$2X - 4 = 0$} (error);
+\node[terminal,below left=3cm of if] (return) {\texttt{42 / a}};
 \path (if) edge [bend right=30] (return);
 \end{tikzpicture}}
-\end{multicols}
+\end{pptWide}
 
 \plush{}
 
@@ -266,6 +266,10 @@ for (int i = 10; i >= 0; i--) {
   a += 42 / i;
 }
 \end{verbatim}
+
+Path:
+
+\textcolor{orange}{$( a, b, c, d, e, g, d, e, g, \dots, g, d, f )$}
 }
 \par\columnbreak\par
 \scalebox{.7}{\begin{tikzpicture}[graph]
@@ -273,9 +277,9 @@ for (int i = 10; i >= 0; i--) {
 \node[terminal,below=1cm of start] (zero) {\texttt{a := 0}}; \path (start) edge node[note,right] {a} (zero);
 \node[terminal,below=1cm of zero] (for) {\texttt{i := 10}}; \path (zero) edge node[note,right] {b} (for);
 \node[terminal,below=1cm of for] (gte) {\texttt{i >= 0}}; \path (for) edge node[note,right] {c} (gte);
-\node[terminal,below right=1cm and 3cm of gte] (div) {\texttt{a += 42 / i}}; \path (gte) edge node[note,right] {d} (div);
-\node[terminal,below left=1cm and 2cm of div] (minus) {\texttt{i-{}-}}; \path (div) edge node[note,right] {e} (minus);
-\node[terminal,right=2cm of div] (error) {\texttt{error!}}; \path (div) edge node[note,right] {f} (error);
+\node[terminal,below right=1cm and 3cm of gte] (div) {\texttt{a += 42 / i}}; \path (gte) edge node[note,above right] {d} (div);
+\node[terminal,below left=1cm and 2cm of div] (minus) {\texttt{i-{}-}}; \path (div) edge node[note,below right] {e} (minus);
+\node[terminal,right=2cm of div] (error) {\texttt{error!}}; \path (div) edge node[note,above] {f} (error);
 \node[draw=none,minimum width=0pt,inner sep=0pt, below left=3cm and 3cm of gte] (exit) {$\circ$};
 \path (minus) edge[bend left=30] node[note,right] {g} (gte);
 \path (gte) edge[bend right=30] node[note,right] {h} (exit);
@@ -306,8 +310,10 @@ int main() {
   return a;
 }
 $ clang-tidy a.cpp --
-$ clang --analyze -Xclang -analyzer-constraints=z3 -Xclang -analyzer-max-loop -Xclang 5 a.cpp
-$ clang --analyze -Xclang -analyzer-constraints=z3 -Xclang -analyzer-max-loop -Xclang 15 a.cpp
+$ clang --analyze -Xclang -analyzer-constraints=z3 \
+  -Xclang -analyzer-max-loop -Xclang 5 a.cpp
+$ clang --analyze -Xclang -analyzer-constraints=z3 \
+  -Xclang -analyzer-max-loop -Xclang 15 a.cpp
 a.cpp:4:13: warning: Division by zero [core.DivideZero]
     a += 42 / i;
          ~~~^~~
@@ -342,7 +348,7 @@ int main(int argc, char** argv) {
 {\ttfamily\scriptsize
 \#include <climits> \\
 \#include "stdlib.h" \\
-{\color{red}\#include "klee/klee.h"} \\
+{\color{orange}\#include "klee/klee.h"} \\
 int f(int x) \{ \\
 \quad  int a = x * 2; \\
 \quad  a = a - 4; \\
@@ -351,7 +357,7 @@ int f(int x) \{ \\
 \quad  return 42 / a; \\
 \} \\
 int main(int argc, char** argv) \{ \\
-{\color{red}
+{\color{orange}
 \quad  int x; \\
 \quad  klee\_make\_symbolic(\&x, sizeof(x), "x");} \\
 \quad  return f(x); \\
@@ -485,7 +491,7 @@ void raise(user u, int limit) {
 \node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
 \node[terminal,below=1cm of start] (set) {\texttt{s := salary\_of(u)}}; \path (start) edge (set);
 \node[terminal,below=1cm of set] (lt) {\texttt{s < limit}}; \path (set) edge (lt);
-\node[terminal,below right=3cm of lt] (update) {\texttt{update()}}; \path (lt) edge node[note,right] {$S \mapsto \texttt{salary\_of}(U), S < L$} (update);
+\node[terminal,below right=3cm of lt] (update) {\texttt{update()}}; \path (lt) edge node[note,above right=-1cm and -1cm] {\begin{minipage}{3in}\begin{gather*} S \mapsto \texttt{salary\_of}(U)\\ S < L \end{gather*}\end{minipage}} (update);
 \node[draw=none,minimum width=0pt,inner sep=0pt,below=5cm of lt] (return) {$\circ$};
 \path (update) edge [bend left=30] (return);
 \path (lt) edge [bend right=30] (return);
@@ -517,7 +523,7 @@ How to find test values of \texttt{u} and \texttt{limit} for \texttt{raise()}? I
 \node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
 \node[terminal,below=1cm of start] (set) {\texttt{s := salary\_of(u)}}; \path (start) edge[line width=4pt] node[note,right] {$\texttt{u} \mapsto \texttt{Viki}, \texttt{limit} \mapsto L$} (set);
 \node[terminal,below=1cm of set] (lt) {\texttt{s < limit}}; \path (set) edge[line width=4pt] node[note,right] {$\texttt{u} \mapsto \texttt{Viki}, \texttt{limit} \mapsto L, \texttt{s} \mapsto \texttt{120}$} (lt);
-\node[terminal,below right=3cm of lt] (update) {\texttt{update()}}; \path (lt) edge[line width=4pt] node[note,right] {$\texttt{120} < L$} (update);
+\node[terminal,below right=3cm of lt] (update) {\texttt{update()}}; \path (lt) edge[line width=4pt] node[note,above right=-1cm and -1cm] {\begin{minipage}{3in}\begin{gather*} S \mapsto \texttt{120}\\ S < L \end{gather*}\end{minipage}} (update);
 \node[draw=none,minimum width=0pt,inner sep=0pt,below=5cm of lt] (return) {$\circ$};
 \path (update) edge[line width=4pt] [bend left=30] (return);
 \path (lt) edge [bend right=30] (return);
@@ -525,5 +531,9 @@ How to find test values of \texttt{u} and \texttt{limit} for \texttt{raise()}? I
 \end{pptWide}
 
 \plush{}
+
+\pptSection[Literature]{Further Reading/Watching}
+
+Check this GitHub repo: \href{https://github.com/ksluckow/awesome-symbolic-execution}{ksluckow/awesome-symbolic-execution}
 
 \end{document}

@@ -23,7 +23,7 @@
 \documentclass{article}
 \usepackage{../ppa}
 \newcommand*\thetitle{Symbolic Execution}
-\newcommand*\thesubtitle{...}
+\newcommand*\thesubtitle{Theory, Limitations, Test Generation, Concolic Testing}
 \begin{document}
 
 \plush{\innoTitlePage{8}}
@@ -228,6 +228,33 @@ SMT solvers: Z3, cvc5, Yices, and many more...
 
 \plush{}
 
+\pptSection[Unsolvable]{Unsolvable Constraints}
+
+Symbolic execution cannot handle \emph{unsolvable} or almost unsolvable constraints.
+
+\begin{multicols}{2}
+{\small\begin{verbatim}
+void enter(String p) {
+  int h = sha256(p);
+  if (!h.endsWith("68f728")) {
+    error("Access denied!");
+  }
+  // You are welcome!
+}
+\end{verbatim}
+}
+\par\columnbreak\par
+Path constraint:
+
+\begin{gather*}
+p \mapsto P \\
+H \mapsto \texttt{sha256}(P) \\
+\texttt{endsWith}(H) = \textbf{tt}
+\end{gather*}
+\end{multicols}
+
+\plush{}
+
 \pptSection[Explosion]{Path Explosion}
 
 \emph{Path explosion} refers to the fact that the number of control-flow paths in a program grows exponentially with an increase in program size and can even be infinite in the case of programs with unbounded loop iterations.
@@ -267,7 +294,7 @@ for (int i = 10; i >= 0; i--) {
 
 \plush{}
 
-\pptSection[CSA]{Clang Tidy vs. Clang Static Analyzer}
+\pptSection[CSA]{Clang Static Analyzer}
 
 {\scriptsize\begin{verbatim}
 $ cat a.cpp
@@ -286,6 +313,7 @@ a.cpp:4:13: warning: Division by zero [core.DivideZero]
          ~~~^~~
 1 warning generated.
 \end{verbatim}
+}
 
 \plush{}
 
@@ -349,6 +377,9 @@ KLEE: done: generated tests = 2
 $ ls -al klee-out-0/*.ktest
 -rw-r--r--   1 yb  staff    46 Apr  7 17:30 test000001.ktest
 -rw-r--r--   1 yb  staff    46 Apr  7 17:30 test000002.ktest
+
+$ llvm-bcanalyzer --dump a.bc
+...
 \end{verbatim}
 }
 
@@ -427,12 +458,72 @@ $ KTEST_FILE=klee-last/test000002.ktest ./a.out ; echo $?
 
 \plush{}
 
-\plush{\pptChapter{Concolic Execution}}
+\plush{\pptChapter{Concolic Testing}}
 
-\pptSection[...]{...}
+\pptSection[Example]{Motivating Example}
+
+\begin{pptWide}{2}
+{\scriptsize\begin{verbatim}
+enum user { Viki, Peter, Jeff, Sarah };
+
+int salary_of(user u) { ... }
+
+void raise(user u, int limit) {
+  int s = salary_of(u);
+  if (s < limit)
+    update(u, limit);
+}
+
+// Viki    120
+// Peter   180
+// Jeff     50
+// Sarah    70
+\end{verbatim}
+}
+\par\columnbreak\par
+\scalebox{1}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (set) {\texttt{s := salary\_of(u)}}; \path (start) edge (set);
+\node[terminal,below=1cm of set] (lt) {\texttt{s < limit}}; \path (set) edge (lt);
+\node[terminal,below right=3cm of lt] (update) {\texttt{update()}}; \path (lt) edge node[note,right] {$S \mapsto \texttt{salary\_of}(U), S < L$} (update);
+\node[draw=none,minimum width=0pt,inner sep=0pt,below=5cm of lt] (return) {$\circ$};
+\path (update) edge [bend left=30] (return);
+\path (lt) edge [bend right=30] (return);
+\end{tikzpicture}}
+\end{pptWide}
+
+How to find test values of \texttt{u} and \texttt{limit} for \texttt{raise()}? It's impossible :(
 
 \plush{}
 
-...
+\pptSection[Steps]{Two Steps}
+
+\begin{pptWide}{2}
+1. Concrete (w/random input):
+
+\scalebox{1}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (set) {\texttt{s := salary\_of(u)}}; \path (start) edge[line width=4pt] node[note,right] {$\texttt{u} \mapsto \texttt{Viki}, \texttt{limit} \mapsto \texttt{0}$} (set);
+\node[terminal,below=1cm of set] (lt) {\texttt{s < limit}}; \path (set) edge[line width=4pt] node[note,right] {$\texttt{u} \mapsto \texttt{Viki}, \texttt{limit} \mapsto \texttt{0}, \texttt{s} \mapsto \texttt{120}$} (lt);
+\node[terminal,below right=3cm of lt] (update) {\texttt{update()}}; \path (lt) edge (update);
+\node[draw=none,minimum width=0pt,inner sep=0pt,below=5cm of lt] (return) {$\circ$};
+\path (update) edge [bend left=30] (return);
+\path (lt) edge[line width=4pt] [bend right=30] node[note,right] {$\textbf{ff}$} (return);
+\end{tikzpicture}}
+\par\columnbreak\par
+2. Symbolic (w/neglected condition):
+
+\scalebox{1}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (set) {\texttt{s := salary\_of(u)}}; \path (start) edge[line width=4pt] node[note,right] {$\texttt{u} \mapsto \texttt{Viki}, \texttt{limit} \mapsto L$} (set);
+\node[terminal,below=1cm of set] (lt) {\texttt{s < limit}}; \path (set) edge[line width=4pt] node[note,right] {$\texttt{u} \mapsto \texttt{Viki}, \texttt{limit} \mapsto L, \texttt{s} \mapsto \texttt{120}$} (lt);
+\node[terminal,below right=3cm of lt] (update) {\texttt{update()}}; \path (lt) edge[line width=4pt] node[note,right] {$\texttt{120} < L$} (update);
+\node[draw=none,minimum width=0pt,inner sep=0pt,below=5cm of lt] (return) {$\circ$};
+\path (update) edge[line width=4pt] [bend left=30] (return);
+\path (lt) edge [bend right=30] (return);
+\end{tikzpicture}}
+\end{pptWide}
+
+\plush{}
 
 \end{document}

@@ -28,12 +28,254 @@
 
 \plush{\ppaTitlePage{9}}
 
+% \emph{Model checking} is a method for checking whether a finite-state model of a system meets a given specification.
+
 \pptToc
 
-\plush{\pptChapter{...}}
+\plush{\pptChapter{Motivating Example}}
 
-\pptSection{...}
+\pptSection{Div by Zero}
+
+\begin{pptWide}{4}
+{\small\begin{verbatim}
+// Process no. 1:
+
+extern int x;
+extern double y;
+int measure() {
+  if (x != 0) {
+    y = 1.0 / x;
+  }
+}
+\end{verbatim}
+}
+\par\columnbreak\par
+\scalebox{.8}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (neq) {\texttt{x != 0}}; \path (start) edge (neq);
+\node[terminal,below right=1cm and .1cm of neq] (div) {\texttt{y = 1 / x}}; \path (neq) edge (div);
+\node[draw=none,minimum width=0pt,inner sep=0pt,below=3cm of neq] (exit) {$\circ$};
+\path (neq) edge (exit);
+\path (exit) edge [color=orange, line width=2pt, bend left=90] (start);
+\end{tikzpicture}}
+\par\columnbreak\par
+{\small\begin{verbatim}
+// Process no. 2:
+
+extern int x;
+void roll() {
+  x += 1;
+  if (x > 10) {
+    x -= 10;
+  }
+}
+\end{verbatim}
+}
+\par\columnbreak\par
+\scalebox{.8}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1cm of start] (plus) {\texttt{x = x + 1}}; \path (start) edge (plus);
+\node[terminal,below=1cm of plus] (gt) {\texttt{x > 10}}; \path (plus) edge (gt);
+\node[terminal,below right=1cm and .1cm of gt] (set) {\texttt{x = x - 10}}; \path (gt) edge (set);
+\node[draw=none,minimum width=0pt,inner sep=0pt,below=3cm of gt] (exit) {$\circ$};
+\path (gt) edge (exit);
+\path (exit) edge [color=orange, line width=2pt, bend left=90] (start);
+\end{tikzpicture}}
+\end{pptWide}
+
+Can we detect ``division by zero'' using symbolic execution? Is ``division by zero'' the only error here?
+
+\plush{}
+
+\pptSection[ProMeLa]{ProMeLa (Process Meta Language)}
+
+\begin{pptWide}{2}
+{\small\begin{verbatim}
+extern int x;
+extern double y;
+int measure() {
+  if (x != 0) {
+    y = 1.0 / x;
+  }
+}
+void roll() {
+  x += 1;
+  if (x > 10) {
+    x -= 10;
+  }
+}
+\end{verbatim}
+}
+\par\columnbreak\par
+{\scriptsize\begin{verbatim}
+int x; bool dbz;
+active proctype measure() {
+  do :: true ->
+    if
+    :: (x != 0) -> dbz = (x == 0)
+    :: skip
+    fi
+  od
+}
+active proctype roll() {
+  do :: true ->
+    x = x + 1;
+    if
+    :: x > 10 -> x = x - 10
+    :: skip
+    fi
+  od
+}
+\end{verbatim}
+}
+\end{pptWide}
+
+\plush{}
+
+\pptSection[SPIN]{SPIN (Simple ProMeLa Interpreter)}
+
+\begin{pptWide}{2}
+{\scriptsize\begin{verbatim}
+int x; bool dbz;
+active proctype measure() {
+  do :: true ->
+    if
+    :: (x != 0) -> dbz = (x == 0)
+    :: skip
+    fi
+  od
+}
+active proctype roll() {
+  do :: true ->
+    x = x + 1;
+    if
+    :: x > 10 -> x = x - 10
+    :: skip
+    fi;
+    printf("x = %d\n", x);
+  od
+}
+\end{verbatim}
+}
+\par\columnbreak\par
+{\scriptsize\begin{verbatim}
+$ spin main.pml | head
+          x = 1
+          x = 2
+          x = 3
+          x = 4
+          x = 5
+          x = 6
+          x = 7
+          x = 8
+          x = 9
+          x = 10
+$ spin main.pml | tail
+...
+\end{verbatim}
+}
+
+Just checkout \href{https://github.com/nimble-code/Spin}{this repo} and run \texttt{make},
+the \texttt{spin} binary will be compiled.
+\end{pptWide}
+
+\plush{}
+
+\pptSection[Monitor]{Monitoring Process}
+
+\begin{pptWide}{2}
+{\scriptsize\begin{verbatim}
+int x; bool dbz;
+active proctype measure() {
+  do :: true ->
+    if
+    :: (x != 0) -> dbz = (x == 0)
+    :: skip
+    fi
+  od
+}
+active[2] proctype roll() {
+  do :: true ->
+    x = x + 1;
+    if
+    :: x > 10 -> x = x - 10
+    :: skip
+    fi
+  od
+}
+\end{verbatim}
+}
+\par\columnbreak\par
+{\scriptsize\begin{verbatim}
+active proctype monitor() {
+  do :: true ->
+    assert(!dbz);
+    assert(x >= 0);
+  od
+}
+\end{verbatim}
+}
+
+Pay attention to the \texttt{[2]} suffix after the \texttt{active}
+keyword. It tells SPIN to start two instances of the \texttt{roll} process.
+\end{pptWide}
+
+\plush{}
+
+\pptSection[Assertion]{Fail on Assertion}
+
+\begin{pptWide}{2}
+{\scriptsize\begin{verbatim}
+int x; bool dbz;
+active proctype measure() {
+  do :: true ->
+    if
+    :: (x != 0) -> dbz = (x == 0)
+    :: skip
+    fi
+  od }
+active[2] proctype roll() {
+  do :: true ->
+    x = x + 1;
+    if
+    :: x > 10 -> x = x - 10
+    :: skip
+    fi
+  od }
+active proctype monitor() {
+  do :: true -> assert(!dbz); assert(x >= 0); od
+}
+\end{verbatim}
+}
+\par\columnbreak\par
+{\scriptsize\begin{verbatim}
+$ spin main.pml
+spin: main.pml:22, Error: assertion violated
+spin: text of failed assertion: assert((x>=0))
+#processes: 4
+    x = -9
+    dbz = 0
+584:  proc  3 (monitor:1) main.pml:22 (state 3)
+584:  proc  2 (roll:1) main.pml:17 (state 7)
+584:  proc  1 (roll:1) main.pml:18 (state 9)
+584:  proc  0 (measure:1) main.pml:9 (state 8)
+4 processes created
+\end{verbatim}
+}
+\end{pptWide}
+
+\plush{}
+
+\plush{\pptChapter{Model-less Checking}}
+
+\pptSection[JPF]{Java PathFinder}
 
 ...
+
+\pptSection[Literature]{Further Reading/Watching}
+
+Introduction lecture by \href{https://www.youtube.com/watch?v=VHWEldcSx14}{Joost-Pieter Katoen}
+
+\href{https://spinroot.com/spin/Doc/p40-ben-ari.pdf}{A Primer on Model Checking} by Mordechai Ben-Ari
 
 \end{document}

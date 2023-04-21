@@ -22,13 +22,12 @@
 
 \documentclass{article}
 \usepackage{../ppa}
+\usepackage{setspace}
 \newcommand*\thetitle{Model Checking}
-\newcommand*\thesubtitle{...}
+\newcommand*\thesubtitle{Theory, SPIN, Java PathFinder}
 \begin{document}
 
 \plush{\ppaTitlePage{9}}
-
-% \emph{Model checking} is a method for checking whether a finite-state model of a system meets a given specification.
 
 \pptToc
 
@@ -76,7 +75,7 @@ void roll() {
 \node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
 \node[terminal,below=1cm of start] (plus) {\texttt{x = x + 1}}; \path (start) edge (plus);
 \node[terminal,below=1cm of plus] (gt) {\texttt{x > 10}}; \path (plus) edge (gt);
-\node[terminal,below right=1cm and .1cm of gt] (set) {\texttt{x = x - 10}}; \path (gt) edge (set);
+\node[terminal,below right=2cm and 1.2cm of gt,anchor=center] (set) {\texttt{x = x - 10}}; \path (gt) edge (set);
 \node[draw=none,minimum width=0pt,inner sep=0pt,below=3cm of gt] (exit) {$\circ$};
 \path (gt) edge (exit);
 \path (exit) edge [color=orange, line width=2pt, bend left=90] (start);
@@ -266,16 +265,186 @@ spin: text of failed assertion: assert((x>=0))
 
 \plush{}
 
-\plush{\pptChapter{Model-less Checking}}
+\plush{\pptChapter{The Theory}}
+
+\pptSection[Idea]{The Idea}
+
+\emph{Model checking} is a method for checking whether a finite-state model of a system meets a given specification.
+
+\begin{enumerate}
+\item Represent software as a \emph{model}
+\item Define \emph{constraints} on the model (using temporal logic)
+\item Evaluate the model until constraints are \emph{violated/met}
+\item Refine the model and constraints
+\end{enumerate}
+
+\plush{}
+
+\pptSection[Model]{The Model}
+
+\pptPic{0.8}{spin.png}
+
+{\scriptsize The picture is taken from ``The Model Checker SPIN'' paper by Gerard J. Holzmann.}
+
+\plush{}
+
+\pptSection[LTL]{Linear Temporal Logic}
+
+\pptPic{.9}{ltl.png}
+
+\plush{}
+
+\plush{\pptChapter{Model-less Model Checking}}
+
+\pptSection{Race Condition}
+
+A \emph{race condition} is the condition of where the system's substantive behavior is dependent on the sequence
+or timing of other uncontrollable events.
+
+\begin{pptWide}{2}
+{\scriptsize\begin{verbatim}
+public class Race {
+  static int d = 42;
+  public static void main (String[] args)
+    throws Exception {
+    new Thread(
+      () -> {
+        d = 0;
+      }
+    ).start();
+    System.out.printf("x = %d\n", 420 / d);
+  }
+}
+\end{verbatim}
+}
+\par\columnbreak\par
+{\scriptsize\begin{verbatim}
+$ javac Race.java
+$ while true; do java Race; done
+x = 10
+x = 10
+x = 10
+x = 10
+Exception in thread "main"
+  java.lang.ArithmeticException: / by zero
+  at Race.main(Race.java:9)
+x = 10
+x = 10
+^C
+\end{verbatim}
+}
+\end{pptWide}
+\plush{}
+
+\pptSection[Explosion]{States and Their Explosion}
+
+\begin{pptWide}{2}
+{\scriptsize\begin{verbatim}
+public class Race {
+  static int d = 42;
+  public static void main (String[] args)
+    throws Exception {
+    new Thread(
+      () -> {
+        d = 0;
+      }
+    ).start();
+    System.out.printf("x = %d\n", 420 / d);
+  }
+}
+\end{verbatim}
+}
+\par\columnbreak\par
+\scalebox{.8}{\begin{tikzpicture}[graph]
+\node[draw=none,minimum width=0pt,inner sep=0pt] (start) {$\circ$};
+\node[terminal,below=1.5cm of start] (set) {\texttt{d $\to$ 42}}; \path (start) edge (set);
+\node[right=0cm of set,draw=none,color=orange] {$s_1$};
+\node[terminal,below left=1.5cm of set] (zero) {\texttt{d $\to$ 0}}; \path (set) edge (zero);
+\node[terminal,below=1.5cm of zero,draw=none] (error) {\texttt{error}}; \path (zero) edge (error);
+\node[right=0cm of zero,draw=none,color=orange] {$s_2$};
+\node[terminal,below right=1.5cm of set,draw=none] (printf) {\texttt{printf}}; \path (set) edge (printf);
+\node[draw=none,minimum width=0pt,inner sep=0pt,below=1.5cm of printf] (exit) {$\circ$}; \path (printf) edge (exit);
+\end{tikzpicture}}
+\end{pptWide}
+
+As the number of \emph{state variables} in the system increases, the size of the system state space
+grows exponentially. This is called the \emph{state explosion problem}.
+
+\plush{}
 
 \pptSection[JPF]{Java PathFinder}
 
-...
+\begin{pptWide}{2}
+{\setstretch{0.8}\fontsize{10}{10}\selectfont\begin{verbatim}
+$ java -jar build/RunJPF.jar src/examples/Race.jpf
+JavaPathfinder core system v8.0 (rev 3408119d115e539956a3d920e22e856e05bb9d23)
+- (C) 2005-2014 United States Government. All rights reserved.
+
+
+==================================== system under test
+Race.main()
+
+==================================== search started: 4/21/23 5:43 AM
+x = 10
+
+==================================== error 1
+gov.nasa.jpf.listener.PreciseRaceDetector
+race for field Race.d
+  main at Race.main(Race.java:9)
+    "System.out.printf("x = %d\n", 420 / d);"  READ:  getstatic Race.d
+  Thread-1 at Race.lambda$main$0(Race.java:6)
+    "d = 0;"  WRITE: putstatic Race.d
+
+
+==================================== trace #1
+------------------------------------------------------ transition #0 thread: 0
+gov.nasa.jpf.vm.choice.ThreadChoiceFromSet {id:"ROOT" ,1/1,isCascaded:false}
+      [6345 insn w/o sources]
+  Race.java:2                    : static int d = 42;
+  Race.java:1                    : public class Race {
+      [1 insn w/o sources]
+  Race.java:4                    : new Thread(
+      [145 insn w/o sources]
+  Race.java:8                    : ).start();
+      [1 insn w/o sources]
+------------------------------------------------------ transition #1 thread: 1
+gov.nasa.jpf.vm.choice.ThreadChoiceFromSet {id:"START" ,2/2,isCascaded:false}
+      [3 insn w/o sources]
+  Race.java:6                    : d = 0;
+------------------------------------------------------ transition #2 thread: 0
+gov.nasa.jpf.vm.choice.ThreadChoiceFromSet {id:"SHARED_CLASS" ,1/2,isCascaded:false}
+      [2 insn w/o sources]
+  Race.java:9                    : System.out.printf("x = %d\n", 420 / d);
+------------------------------------------------------ transition #3 thread: 0
+gov.nasa.jpf.vm.choice.ThreadChoiceFromSet {id:"SHARED_CLASS" ,1/2,isCascaded:false}
+  Race.java:9                    : System.out.printf("x = %d\n", 420 / d);
+
+=================================== results
+error #1: gov.nasa.jpf.listener.PreciseRaceDetector
+  "race for field Race.d   main at Race.main(Race.jav..."
+
+=================================== statistics
+elapsed time:       00:00:00
+states:             new=6,visited=0,backtracked=2,end=1
+search:             maxDepth=4,constraints=0
+choice generators:  thread=5 (signal=0,lock=1,sharedRef=2,...
+heap:               new=741,released=22,maxLive=722,gcCycles=4
+instructions:       6546
+max memory:         491MB
+loaded code:        classes=83,methods=1817
+
+================================== search finished: 4/21/23 5:43 AM
+\end{verbatim}
+}
+\end{pptWide}
+\plush{}
 
 \pptSection[Literature]{Further Reading/Watching}
 
 Introduction lecture by \href{https://www.youtube.com/watch?v=VHWEldcSx14}{Joost-Pieter Katoen}
 
 \href{https://spinroot.com/spin/Doc/p40-ben-ari.pdf}{A Primer on Model Checking} by Mordechai Ben-Ari
+
+\href{http://spinroot.com/spin/Doc/ieee97.pdf}{The Model Checker SPIN} by Gerard J. Holzmann
 
 \end{document}

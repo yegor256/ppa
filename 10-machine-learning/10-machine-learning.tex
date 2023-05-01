@@ -1,0 +1,279 @@
+% (The MIT License)
+%
+% Copyright (c) 2022-2023 Yegor Bugayenko
+%
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the 'Software'), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be included in all
+% copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
+
+\documentclass{article}
+\usepackage{../ppa}
+\usepackage{setspace}
+\newcommand*\thetitle{Program Analysis with ML}
+\newcommand*\thesubtitle{..}
+\begin{document}
+
+\plush{\ppaTitlePage{10}}
+
+\pptToc
+
+\plush{\pptChapter[ML]{How Machine Learning Works?}}
+
+\pptSection{Deterministic Algorithm}
+
+A \emph{deterministic} algorithm means that given a particular input, the algorithm will always produce the same output:
+
+{\scriptsize\begin{verbatim}
+String sayHello(int hours, int minutes) {
+  if (hours > 4 && hours < 12) {
+    return "Good morning!";
+  } else if (hours > 12 && hours < 18) {
+    return "Good afternoon!";
+  } else if (hours > 18 && hours < 22) {
+    return "Good evening!";
+  }
+  return "Good night!";
+}
+\end{verbatim}
+}
+
+The behavior of the \texttt{sayHello()} function is defined upfront by its creator.
+
+\plush{}
+
+\pptSection{Training a Model}
+
+``The process of training an \emph{ML model} involves providing a \emph{learning algorithm} with \emph{training data}. The algorithm finds patterns in the training data that map the \emph{input data attributes} to the \emph{target attributes}, and it outputs an ML model that captures these patterns.'' (c) Amazon
+
+\begin{multicols}{2}
+{\scriptsize\begin{verbatim}
+ 8:35  Good morning!
+ 8:40  Good morning!
+10:00  How are you?
+11:55  Good afternoon!
+13:18  Good day!
+14:50  Good afternoon!
+15:22  Good afternoon, Sir!
+17:14  Good evening!
+...
+22:34  Evening!
+23:50  Good night!
+\end{verbatim}
+}
+\par\columnbreak\par
+\begin{equation*}
+f : H \times M \to G
+\end{equation*}
+{\scriptsize\begin{equation*}
+\begin{split}
+H &= \{ 0, 1, 2, \dots, 23 \} \\
+M &= \{ 0, 1, 2, \dots, 59 \} \\
+G &= \{ \texttt{"Good morning!"}, \\
+  & \quad\texttt{"Good afternoon!"}, \\
+  & \quad\texttt{"Good evening!"}, \\
+  & \quad\texttt{"Good night!"} \} \\
+\end{split}
+\end{equation*}}
+\end{multicols}
+
+\plush{}
+
+\pptSection{Embedding}
+
+``An \emph{embedding} is a relatively low-dimensional space into which you can translate high-dimensional vectors.'' (c) Google
+
+\begin{multicols}{3}
+{\scriptsize\begin{verbatim}
+Features:
+
+ 8:35  Good morning!
+ 8:40  Good morning!
+10:00  How are you?
+11:55  Good afternoon!
+13:18  Good day!
+14:50  Good afternoon!
+15:22  Good afternoon, Sir!
+17:14  Good evening!
+...
+22:34  Evening!
+23:50  Good night!
+\end{verbatim}
+}
+\par\columnbreak\par
+{\scriptsize\begin{verbatim}
+Embeddings:
+
+(8, 30, "morning")
+(8, 45, "morning")
+NIL
+(12, 00, "morning")
+NIL
+(14, 45, "afternoon")
+(15, 30, "afternoon")
+(17, 00, "evening")
+...
+(22, 30, "evening")
+(23, 45, "night")
+\end{verbatim}
+}
+\par\columnbreak\par
+{\scriptsize\begin{verbatim}
+Vectors:
+
+(8, 30, 0)
+(8, 45, 0)
+
+(12, 00, 0)
+
+(14, 45, 1)
+(15, 30, 1)
+(17, 00, 2)
+...
+(22, 30, 2)
+(23, 45, 3)
+\end{verbatim}
+}
+\end{multicols}
+
+\plush{}
+
+\pptSection{Data Science}
+
+There are five tasks to complete \emph{repeatedly}:
+
+\begin{enumerate}
+  \item Collect and clean a dataset
+  \item Define features + embeddings
+  \item Choose and tune an algorithm
+  \item Train a Model
+  \item Validate the Model
+\end{enumerate}
+
+\plush{}
+
+\plush{\pptChapter[Analysis]{How Program Analysis Fits In?}}
+
+\pptSection[Vectorization]{Code Vectorization}
+
+...
+
+\plush{}
+
+\pptSection[Attributes]{Target Attributes}
+
+...
+
+\plush{}
+
+\plush{\pptChapter[Companions]{AI Coding Companions}}
+
+\pptSection[Complete]{Auto Code Completion}
+
+This is how \href{https://github.com/features/copilot}{Copilot} by GitHub is suggesting code completion in our own programming language,
+which he definitely hasn't seen before:
+
+\begin{multicols}{4}
+\pptPic{.9}{copilot-1.png}
+\pptPic{.9}{copilot-2.png}
+\pptPic{.9}{copilot-3.png}
+\pptPic{.9}{copilot-4.png}
+\end{multicols}
+
+Read also about \href{https://aws.amazon.com/codewhisperer/}{AWS CodeWhisperer} at \href{https://www.allthingsdistributed.com/2023/04/how-ai-coding-companions-will-change-the-way-developers-work.html}{Werner Vogels' blog}. Also, about \href{https://github.com/codota}{TabNine} (used to be Codota).
+
+\plush{}
+
+\pptSection[PR]{Pull Request Explanation}
+
+\pptPic{0.75}{pr-codex.png}
+
+\href{https://github.com/decentralizedlabs/pr-codex}{PR-Codex} plugin for GitHub by \href{https://www.dlabs.app/}{dlabs}
+
+\plush{}
+
+\pptSection[Review]{Reviewing Changes}
+
+\pptPic{0.75}{codex-qa.png}
+
+The discussion happened in this GitHub issue: \href{https://github.com/objectionary/eo/pull/2034}{objectionary/eo:2034}
+
+\plush{}
+
+\pptSection[Risks]{Pull Request Risk Analysis}
+
+
+\plush{}
+
+\pptSection[Explain]{Explain This to Me!}
+
+\pptPic{0.9}{mintlify.png}
+
+\href{https://github.com/mintlify/writer}{Writer} plugin for VS-Code by \href{Mintlify}{https://writer.mintlify.com/}
+
+\plush{}
+
+\pptSection[Repeat]{Repeat After Me!}
+
+Read about ``\href{https://devblogs.microsoft.com/visualstudio/making-repeated-edits-easier-with-intellicode-suggestions/}{making repeated edits easier with IntelliCode suggestions}'', by Peter Groenewegen.
+
+\plush{}
+
+\pptSection[Tests]{Test Case Generation}
+
+Ponicode was alive in 2022, now it's \st{dead} acquired by CircleCI.
+
+\plush{}
+
+\pptSection[Refactor]{Automated Refactoring}
+
+\begin{multicols}{2}
+\pptPic{.9}{codescene.png}
+\par\columnbreak\par
+I found this picture in the \href{https://codescene.com/engineering-blog/refactoring-recommendations}{CodeScene website}.
+\end{multicols}
+
+\plush{}
+
+\pptSection[LLM]{Large Language Models (LLM)}
+
+\begin{multicols}{2}
+\pptPic{.9}{gpt-1.png}
+\par\columnbreak\par
+\pptPic{0.9}{gpt-2.png}
+\end{multicols}
+
+\plush{\pptChapter{What's Next?}}
+
+\pptSection[Neural]{Neural Software Analysis}
+
+\textbf{``Neural Software Analysis''} \\
+By Michael Pradel, Satish Chandra \\
+\emph{Communications of the ACM}, January 2022, Vol. 65 No. 1, Pages 86--96
+
+\href{https://www.youtube.com/watch?v=Q0XJ5DoplRU}{Watch it}.
+
+\plush{}
+
+\pptSection[EEG]{Electroencephalography (EEG)}
+
+\textbf{``Understanding Programming Expertise: An Empirical Study of Phasic Brain Wave Changes''} \\
+By Igor Crk, Timothy Kluthe, Andreas Stefik \\
+\emph{ACM Transactions on Computer-Human Interaction}, Volume 23, Issue 1, Article No. 2, Pages 1--29
+
+\plush{}
+
+\end{document}

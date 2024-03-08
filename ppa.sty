@@ -21,7 +21,7 @@
 % SOFTWARE.
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ssd}[00.00.0000 0.0.0 This Course Specials]
+\ProvidesPackage{ppa}[00.00.0000 0.0.0 This Course Specials]
 
 \RequirePackage[T1]{fontenc}
 \RequirePackage[utf8]{inputenc}
@@ -65,12 +65,16 @@
   respected authors.\par
 }}
 
-\newcommand\ppaTitlePage[1]{%
+\newcommand\ppaTitlePage[2]{%
   \pptTitle{\thetitle}{\thesubtitle}\par
   {\scshape Yegor Bugayenko}\par
   Lecture \##1 out of 10 \br
   90 minutes\par
-  All videos are in \href{https://www.youtube.com/playlist?list=PLaIsQH4uc08wdXIC4utfgMxV_iswE9_Md}{this YouTube playlist}.\par
+  \def\param{#2}%
+  \ifx\param\empty\else%
+    The slidedeck was presented by the author in this
+    \textcolor{red}{\href{https://www.youtube.com/watch?v=#2}{YouTube Video}}\par
+  \fi%
   \ppaDisclaimer{}
 }
 

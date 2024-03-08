@@ -51,6 +51,7 @@ package: latexmk
 	done
 	echo "<p>Compiled on: $$(date).</p>" >> index.html
 	echo "<p>The sources are in <a href='https://github.com/yegor256/ppa'>GitHub</a>.</p>" >> index.html
+	echo "<p>Videos are in <a href='https://www.youtube.com/playlist?list=PLaIsQH4uc08wdXIC4utfgMxV_iswE9_Md'>YouTube</a>.</p>" >> index.html
 
 copy:
 	for d in $(DIRS); do

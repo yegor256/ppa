@@ -23,66 +23,17 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{ppa}[00.00.0000 0.0.0 This Course Specials]
 
-\RequirePackage[T1]{fontenc}
-\RequirePackage[utf8]{inputenc}
-\RequirePackage[dry,increment]{crumbs}
-\RequirePackage[static]{clicks}
-\RequirePackage[template,scheme=light]{ppt-slides}
-\RequirePackage[nocn,novert]{ffcode}
+\RequirePackage{../lecture-notes/notes}
+
 \RequirePackage{bussproofs}
   \def\extraVskip{12pt}
   \def\ruleScoreFiller{\hrule height 1pt}
 \RequirePackage{bm}
 \RequirePackage{amsmath}
 \RequirePackage{amssymb}
-\RequirePackage{graphicx}
-  \graphicspath{{../images/}}
-
 \RequirePackage{mathtools}
-\RequirePackage{to-be-determined}
-\RequirePackage{tikz}
-  \usetikzlibrary{positioning}
-  \usetikzlibrary{calc}
-  \usetikzlibrary{arrows.meta}
-\RequirePackage{soul}
-\renewcommand\emph[1]{\ul{#1}}
-\tikzstyle{graph} = [
-  node distance=0,
-  every node/.style={draw=black,circle,minimum width=2.2em,thick},
-  every edge/.append style={draw=black,thick,-{Latex[length=2.5mm,width=2mm]},every node/.style={above}},
-  every loop/.append style={draw=black,thick,-{Latex[length=2.5mm,width=2mm]},every node/.style={above}},
-]
+
 \tikzstyle{terminal} = [rectangle,minimum height=1.5em]
 \tikzstyle{note} = [draw=none,rectangle,midway,font={\small\color{orange}}]
-
-\newcommand\br{\newline}
-
-\newcommand\ppaDisclaimer{{%
-  \color{grey}\ttfamily\footnotesize
-  All visual and text materials presented in this slidedeck are
-  either originally made by the author or taken from public Internet
-  sources, such as websites. Copyright belongs to their
-  respected authors.\par
-}}
-
-\newcommand\ppaTitlePage[2]{%
-  \pptTitle{\thetitle}{\thesubtitle}\par
-  {\scshape Yegor Bugayenko}\par
-  Lecture \##1 out of 10 \br
-  90 minutes\par
-  \def\param{#2}%
-  \ifx\param\empty\else%
-    The slidedeck was presented by the author in this
-    \textcolor{red}{\href{https://www.youtube.com/watch?v=#2}{YouTube Video}}\par
-  \fi%
-  \ppaDisclaimer{}
-}
-
-\newcommand\nospell[1]{#1}
-
-\AtBeginDocument{%
-  \pptLeft{\thetitle{} / \thesubtitle}%
-  \pptRight{@yegor256}%
-}
 
 \endinput

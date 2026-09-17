@@ -18,7 +18,7 @@ is a formal description of execution of \(P\): reachable states, execution trace
 
 \pptSection[Inference]{Inference Rule}
 
-A \emph{proof system} is formed from a set of \emph{inference rules} chained together to form proofs, also called \emph{derivations}. Any derivation has only one final conclusion, which is the statement proved or derived. (Wiki)
+A \hs{proof system} is formed from a set of \hs{inference rules} chained together to form proofs, also called \hs{derivations}. Any derivation has only one final conclusion, which is the statement proved or derived. (Wiki)
 
 \begin{prooftree}
 \AxiomC{$\vdash a < b$}
@@ -27,7 +27,7 @@ A \emph{proof system} is formed from a set of \emph{inference rules} chained tog
 \BinaryInfC{$a < c$}
 \end{prooftree}
 
-Premises (known \emph{facts}): $a < b$ and $b < c$. \\
+Premises (known \hs{facts}): $a < b$ and $b < c$. \\
 {\small (antecedent)}
 
 Conclusion (new fact): $a < c$. \\
@@ -37,7 +37,7 @@ Conclusion (new fact): $a < c$. \\
 
 \pptSection{Axiom}
 
-An \emph{axiom} is an inference rule without a premise.
+An \hs{axiom} is an inference rule without a premise.
 
 \begin{prooftree}
 \AxiomC{}
@@ -51,7 +51,7 @@ It reads: in any environment, the result of multiplication of $x$ by zero equals
 
 \pptSection[Transition]{Transition Rule}
 
-A \emph{transition rule} defines the conditions under which a system may be moved to a new \emph{state}.
+A \hs{transition rule} defines the conditions under which a system may be moved to a new \hs{state}.
 \begin{prooftree}
 \AxiomC{$ \langle \texttt{a}, s \rangle \longrightarrow \langle n, s\rangle $}
 \UnaryInfC{$ \langle \texttt{a++}, s \rangle \longrightarrow \langle n, s[\texttt{a} \mapsto n + 1]\rangle $}
@@ -130,19 +130,19 @@ Proof tree:
 
 \plush{\pptChapter[Vs.]{Operational vs Denotational}}
 
-The \emph{denotational semantics} assign to every expression the \emph{number} denoted by that expression:
+The \hs{denotational semantics} assign to every expression the \hs{number} denoted by that expression:
 \begin{gather*}
 \mathrel{\bm{\Downarrow}} \subseteq \mathcal{A} \times \mathcal{D} \\
 x^n \bm{\Downarrow} y \quad\text{where}\; y = x \times x \times x \dots \times x \quad\text{($n$ times)}
 \end{gather*}
 
-The \emph{operational semantics} describe the computation steps taken in order to evaluate the expression to \emph{normal form}:
+The \hs{operational semantics} describe the computation steps taken in order to evaluate the expression to \hs{normal form}:
 \begin{gather*}
 \mathrel{\bm{\leadsto}} \subseteq \mathcal{A} \times \mathcal{A} \\
 \text{1)}\; x^n \bm{\leadsto} x \times x^{n-1} \quad\text{if}\; x > 0 \quad\quad \text{2)}\; x^0 \bm{\leadsto} 1
 \end{gather*}
 
-The operational semantics is the specification of an \emph{interpreter} for the programming language whereas the denotational semantics tries to capture the \emph{mathematical essence} of a program, abstracting away from computational details.
+The operational semantics is the specification of an \hs{interpreter} for the programming language whereas the denotational semantics tries to capture the \hs{mathematical essence} of a program, abstracting away from computational details.
 
 \plush{}
 
@@ -212,7 +212,7 @@ The meaning of it may be explained by the SOS rule:
   {\langle a\;\texttt{:=}\;e, s \rangle \longrightarrow \langle \texttt{skip}, s[a \mapsto n] \rangle }
 \end{equation*}
 
-It reads: If \(e\) may be \emph{evaluated} to \(n\),
+It reads: If \(e\) may be \hs{evaluated} to \(n\),
 then \(a\;\texttt{:=}\;e\) inserts a new binding \(a \mapsto n\) to the state,
 and skips any further processing. To understand the meaning of \texttt{x+1} a new SOS
 rule is required.
@@ -223,7 +223,7 @@ Introduced by Gordon Plotkin in 1981.
 
 \plush{\pptChapter[Reduction]{Reduction Semantic}}
 
-Consider a \emph{$\lambda$-expression}:
+Consider a \hs{$\lambda$-expression}:
 \begin{equation*}
 (\lambda a.a) b
 \end{equation*}
@@ -233,7 +233,7 @@ int f(int a) { return a; }
 int x = f(b);
 \end{ffcode}
 
-The expression may be reduced using so called \emph{$\beta$-reduction}:
+The expression may be reduced using so called \hs{$\beta$-reduction}:
 \begin{equation*}
 (\lambda x.t) s \longrightarrow t[x:=s]
 \end{equation*}
@@ -246,7 +246,7 @@ Thus
 
 \pptSection[NF]{Normal Form}
 
-A \emph{normal form} is a form that has no more possible applications of reductions.
+A \hs{normal form} is a form that has no more possible applications of reductions.
 This not a normal form:
 \begin{equation*}
 (\lambda a.a) ((\lambda b.b) ((\lambda c.c) d))
@@ -267,7 +267,7 @@ No further reductions are possible.
 \plush{\pptChapter[Literature]{Further Reading/Watching}}
 
 Christopher Strachey (2000),\\
-\emph{Fundamental Concepts in Programming Languages}
+\hs{Fundamental Concepts in Programming Languages}
 
 Alexander Kurz (2022),\\
 \href{https://hackmd.io/@alexhkurz/Hkf6BTL6P}{Operational and Denotational Semantics}

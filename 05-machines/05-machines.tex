@@ -15,15 +15,15 @@
 
 \pptSection{Definition}
 
-An \emph{abstract machine} is a theoretical \emph{model} of computation.
+An \hs{abstract machine} is a theoretical \hs{model} of computation.
 
-Similar to a function, a machine receives \emph{inputs} and produces \emph{outputs} based on predefined \emph{rules}.
+Similar to a function, a machine receives \hs{inputs} and produces \hs{outputs} based on predefined \hs{rules}.
 
-Abstract machines are ``machines'' because they allow \emph{step-by-step} execution of programmes. (really?)
+Abstract machines are ``machines'' because they allow \hs{step-by-step} execution of programmes. (really?)
 
 They are ``abstract'' because they ignore many aspects of actual (hardware) machines.
 
-An abstract machine is an \emph{intermediate language} with a small-step operational semantics.
+An abstract machine is an \hs{intermediate language} with a small-step operational semantics.
 
 \plush{}
 
@@ -37,19 +37,19 @@ teaching of the principles of programming language implementations.
 From a software engineering point of view, the introduction of layers of
 abstraction increases maintainability and portability.'' (\href{https://www.sciencedirect.com/science/article/abs/pii/S0167739X99000886}{1999})
 
-We are interested in using abstract machines to explain the \emph{semantic} of a program.
+We are interested in using abstract machines to explain the \hs{semantic} of a program.
 
 \plush{}
 
 \pptSection{Virtual Machines}
 
-An abstract machine implemented in software is termed a \emph{virtual machine},
+An abstract machine implemented in software is termed a \hs{virtual machine},
 and one implemented in hardware is called simply a ``machine.''
 
 JVM (for Java) and CLR (for .NET) are among most notable examples of virtual machines.
 
-IR (\emph{intermediate representation}) is used internally by a compiler or virtual machine to represent source code.
-An \emph{intermediate language} is the language of an abstract machine.
+IR (\hs{intermediate representation}) is used internally by a compiler or virtual machine to represent source code.
+An \hs{intermediate language} is the language of an abstract machine.
 
 \plush{}
 
@@ -73,7 +73,7 @@ For example, Emil Post's Machine is simpler.
 
 \pptSection{Proof}
 
-The \emph{Church-Turing thesis}: Anything that can be computed can be computed by some Turing machine.
+The \hs{Church-Turing thesis}: Anything that can be computed can be computed by some Turing machine.
 
 There \textbf{has never been a proof}, but the evidence for its validity comes from the fact that every realistic model of computation, yet discovered, has been shown to be equivalent. --- \href{https://mathworld.wolfram.com/Church-TuringThesis.html}{here}.
 
@@ -91,7 +91,7 @@ Application:
 (t s)\quad\quad \text{e.g.}\; (f\;16) = 4
 \end{equation*}
 
-In lambda calculus, \emph{functions} are taken to be ``first class values,''
+In lambda calculus, \hs{functions} are taken to be ``first class values,''
 so functions may be used as the inputs, or be returned as outputs from other functions.
 
 \plush{}

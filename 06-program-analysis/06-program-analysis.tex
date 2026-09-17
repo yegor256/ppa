@@ -18,8 +18,8 @@
 
 \pptSection[Property]{Syntactic \& Semantic Properties}
 
-\emph{Semantic} property can be completely defined with respect to the set of executions of a program,
-while a \emph{syntactic} property can be decided directly based on the program text.
+\hs{Semantic} property can be completely defined with respect to the set of executions of a program,
+while a \hs{syntactic} property can be decided directly based on the program text.
 
 {\ttfamily if (x) \{ printf(\begin{CJK}{UTF8}{gbsn}"大家好"\end{CJK}); \}}
 
@@ -35,11 +35,11 @@ Which properties are dynamic?
 
 \pptSection[Rice]{Rice's Theorem}
 
-\emph{Rice's theorem} states that all non-trivial semantic properties of programs are undecidable.
+\hs{Rice's theorem} states that all non-trivial semantic properties of programs are undecidable.
 
-A property is \emph{non-trivial} if it is neither true for every partial computable function, nor false for every partial computable function.
+A property is \hs{non-trivial} if it is neither true for every partial computable function, nor false for every partial computable function.
 
-\emph{Halting problem} is the problem of determining, from 1)~a description of an arbitrary computer program and 2)~an input, whether the program will finish running, or continue to run forever. A general algorithm to solve the halting problem for all possible program–input pairs \textbf{cannot exist}.
+\hs{Halting problem} is the problem of determining, from 1)~a description of an arbitrary computer program and 2)~an input, whether the program will finish running, or continue to run forever. A general algorithm to solve the halting problem for all possible program–input pairs \textbf{cannot exist}.
 
 \plush{}
 
@@ -61,7 +61,7 @@ Suggest a few properties.
 
 \pptSection[Static]{Static Analysis}
 
-Consider two C++ programs given to a \emph{static analyzer} (e.g. \href{https://clang.llvm.org/extra/clang-tidy/}{Clang Tidy}):
+Consider two C++ programs given to a \hs{static analyzer} (e.g. \href{https://clang.llvm.org/extra/clang-tidy/}{Clang Tidy}):
 
 \begin{multicols}{2}
 {\ttfamily
@@ -88,7 +88,7 @@ Expected answers from Clang Tidy:
 
 \pptSection[Style]{Style Checking}
 
-Consider two C++ programs given to a \emph{style checker} (e.g. \href{https://github.com/cpplint/cpplint}{cpplint}):
+Consider two C++ programs given to a \hs{style checker} (e.g. \href{https://github.com/cpplint/cpplint}{cpplint}):
 
 \begin{multicols}{2}
 {\ttfamily
@@ -115,7 +115,7 @@ Expected answers from cpplint:
 
 \pptSection[Dynamic]{Dynamic Analysis}
 
-Consider this C++ program (Clang Tidy finds no issues) given to a \emph{dynamic analyzer}
+Consider this C++ program (Clang Tidy finds no issues) given to a \hs{dynamic analyzer}
 (\href{https://en.wikipedia.org/wiki/Code_sanitizer}{AddressSanitizer}):
 
 \begin{pptWideOne}
@@ -151,9 +151,9 @@ Dynamic analysis == testing.
 
 \pptSection[Metrics]{Precision \& Recall}
 
-\emph{Precision} is the fraction of relevant instances among the retrieved instances (100\% precision means \emph{soundness}).
+\hs{Precision} is the fraction of relevant instances among the retrieved instances (100\% precision means \hs{soundness}).
 
-\emph{Recall} is the fraction of relevant instances that were retrieved (100\% recall means \emph{completeness}).
+\hs{Recall} is the fraction of relevant instances that were retrieved (100\% recall means \hs{completeness}).
 
 \begin{pptWideOne}
 \begin{gather*}
@@ -217,7 +217,7 @@ FN = \underline{\hspace{1cm}}
 \pptSection[Flip]{Flip of Terminology}
 
 \href{https://cacm.acm.org/blogs/blog-cacm/236068-soundness-and-completeness-with-precision/fulltext}{Soundness and Completeness: With Precision} by Prof. Bertrand Meyer, in Blog@CACM:
-``It is very easy to obtain soundness if we forsake completeness: \emph{reject} every case.''
+``It is very easy to obtain soundness if we forsake completeness: \hs{reject} every case.''
 
 \plush{}
 
@@ -225,9 +225,9 @@ FN = \underline{\hspace{1cm}}
 
 \pptSection[Loset]{Total Order}
 
-\emph{Total order} is a binary relation \(\leq\) (\emph{strict total order} is \(<\)).
+\hs{Total order} is a binary relation \(\leq\) (\hs{strict total order} is \(<\)).
 
-\emph{Lineary ordered set} (loset) is a set equipped with a total order.
+\hs{Lineary ordered set} (loset) is a set equipped with a total order.
 
 Which of them are losets?:
 
@@ -243,9 +243,9 @@ Which of them are losets?:
 
 \pptSection[Poset]{Partially Ordered Set}
 
-\emph{Partial order} is total order but only between some elements.
+\hs{Partial order} is total order but only between some elements.
 
-\emph{Partially ordered set} (poset) is a set equipped with a partial order.
+\hs{Partially ordered set} (poset) is a set equipped with a partial order.
 
 Which of them are posets?:
 
@@ -261,8 +261,8 @@ Which of them are posets?:
 
 \pptSection{Lattice}
 
-\emph{Lattice} is a poset where each two elements \((x, y)\) have \emph{least upper bound} (\emph{join} operator \(x \sqcup y\)) and
-\emph{greatest lower bound} (\emph{meet} operator \(x \sqcap y\)).
+\hs{Lattice} is a poset where each two elements \((x, y)\) have \hs{least upper bound} (\hs{join} operator \(x \sqcup y\)) and
+\hs{greatest lower bound} (\hs{meet} operator \(x \sqcap y\)).
 
 \begin{pptWide}{4}
 \(\{ 42, 2, 13 \}\)\par
@@ -327,7 +327,7 @@ Which of them are posets?:
 
 \pptSection{Intervals}
 
-A lattice may be used to represent \emph{intervals} in a set of values, e.g. in \(\mathbb{Z}\):
+A lattice may be used to represent \hs{intervals} in a set of values, e.g. in \(\mathbb{Z}\):
 
 \begin{tikzpicture}[line width=1pt,->]
 \node (top) {\((-\infty,+\infty)\)};
@@ -386,7 +386,7 @@ What is the square of this oval?
 \pptSection[Functions]{Abstraction and Concretization}
 
 \begin{pptWide}{3}
-\emph{Concrete domain} \(C\) \\ \((\mathbb{Z}, <)\)\par
+\hs{Concrete domain} \(C\) \\ \((\mathbb{Z}, <)\)\par
 \begin{tikzpicture}[line width=1pt,->]
 \node (a) {\(12\)};
 \node [below=1cm of a] (b) {\(7\)};
@@ -399,7 +399,7 @@ What is the square of this oval?
 \draw (e) -- (d);
 \end{tikzpicture}\par
 \par\columnbreak\par
-\emph{Abstract domain} \(A\) \\ \((\{s \vert \{ n \vert n \in \mathbb{N} \} \}, \in)\)\par
+\hs{Abstract domain} \(A\) \\ \((\{s \vert \{ n \vert n \in \mathbb{N} \} \}, \in)\)\par
 \begin{tikzpicture}[line width=1pt,->]
 \node (top) {\(\mathbb{N}\)};
 \node [below left=2cm of top] (2x) {\(2x\)};
@@ -422,7 +422,7 @@ Abstraction function:\\
 Concretization function:\\
 \(\gamma(a) \to c\)
 
-Domains must be related through \emph{Galois connection}:
+Domains must be related through \hs{Galois connection}:
 \(\forall c \in C, \forall a \in A\)\\
 \(\alpha(c) \sqsubseteq a \Longleftrightarrow c \sqsubseteq \gamma(a) \)
 
@@ -434,7 +434,7 @@ Domains must be related through \emph{Galois connection}:
 \pptSection[Transformers]{Abstract Semantics (Transformers)}
 
 \begin{pptWide}{3}
-\emph{Abstract domain}:\par
+\hs{Abstract domain}:\par
 \begin{tikzpicture}[line width=1pt,->]
 \node (top) {\(\mathbb{N}\)};
 \node [below left=2cm of top] (2x) {\(2x\)};
@@ -526,8 +526,8 @@ Concrete counterparts:
 
 \pptSection[Fixed-Point]{Fixed-Point Computation}
 
-\emph{Fixed-Point Computation} is a repeated symbolic execution of the program using abstract semantics
-until approximation reaches an \emph{equilibrium}.
+\hs{Fixed-Point Computation} is a repeated symbolic execution of the program using abstract semantics
+until approximation reaches an \hs{equilibrium}.
 
 \begin{pptWide}{3}
 {\ttfamily

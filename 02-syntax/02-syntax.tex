@@ -38,9 +38,9 @@ eol = "\n";
 
 \plush{\pptChapter{Lexical Analysis}}
 
-Lexical analyzer (\emph{lexer} or \emph{scanner}) takes input language and produces \emph{tokens} (which then can be parsed into parse tree by a parser).
+Lexical analyzer (\hs{lexer} or \hs{scanner}) takes input language and produces \hs{tokens} (which then can be parsed into parse tree by a parser).
 
-\emph{Lexemes} are said to be a sequence of characters in a token.
+\hs{Lexemes} are said to be a sequence of characters in a token.
 \plush{}
 
 Lexers are implemented as DFAs, which use regular expressions. For example, this is the language:
@@ -76,7 +76,7 @@ Command("RENDER"), Integer("30"), Command("EXIT").
 \end{ffcode}
 \plush{}
 
-Some lexems (like spaces or EOLs) are ignored and do not become tokens. They are \emph{non-token} elements. However, they could become tokens, like in this DFA:\\
+Some lexems (like spaces or EOLs) are ignored and do not become tokens. They are \hs{non-token} elements. However, they could become tokens, like in this DFA:\\
 \begin{tikzpicture}[graph]
 \node[double] (s) {$S$};
 \node[double,above right=1cm and 4cm of s] (s1) {1};
@@ -109,14 +109,14 @@ printf("age=%d", &i);
 
 \plush{\pptChapter{Syntactic Analysis}}
 
-While \emph{lemmatization} focuses purely on feature extraction and data cleaning, \emph{syntactic analysis} analyzes the relationship between words and the grammatical structure of sentences.
+While \hs{lemmatization} focuses purely on feature extraction and data cleaning, \hs{syntactic analysis} analyzes the relationship between words and the grammatical structure of sentences.
 \plush{}
 
 \pptSection[LL/LR]{Top-Down and Bottom-Up Parsing}
 
-\emph{Top-down parsing} builds the parse tree from the top (start
+\hs{Top-down parsing} builds the parse tree from the top (start
 symbol) down; most top-down methods are LL.
-\emph{Bottom-up parsing} builds the parse tree from the leaves
+\hs{Bottom-up parsing} builds the parse tree from the leaves
 (terminal symbols) up; most methods are LR.
 \plush{}
 
@@ -127,14 +127,14 @@ LR means \textbf{L}eft-to-right + \textbf{R}ightmost derivation.
 
 \pptSection[Predictive]{Predictive Parsing}
 
-A \emph{recursive descent parser} is the one the checks every rule before making a decision which one is right.
+A \hs{recursive descent parser} is the one the checks every rule before making a decision which one is right.
 
-\emph{Predictive parsing} is possible only for the class of \(LL(k)\) grammars, which are the CFGs for which there exists some positive integer \(k\) that allows a parser to decide which production rule to use by examining only the next \(k\) tokens of input.
+\hs{Predictive parsing} is possible only for the class of \(LL(k)\) grammars, which are the CFGs for which there exists some positive integer \(k\) that allows a parser to decide which production rule to use by examining only the next \(k\) tokens of input.
 \plush{}
 
 \pptSection[CC]{Flex and Bison}
 
-These tools are called \emph{compiler-compilers} (originally \texttt{lex} and \texttt{yacc}) or parser generators.
+These tools are called \hs{compiler-compilers} (originally \texttt{lex} and \texttt{yacc}) or parser generators.
 
 Make this simple Flex program in \texttt{foo.x}:
 \begin{ffcode}
@@ -155,13 +155,13 @@ $ ./a.out
 \end{ffcode}
 \plush{}
 
-Each time the program needs a token, it calls \texttt{yylex()}, which reads a little input and returns the token. When it needs another token, it calls \texttt{yylex()} again. The scanner acts as a \emph{coroutine}; that is, each time it returns, it remembers where it was, and on the next call it picks up where it left off.
+Each time the program needs a token, it calls \texttt{yylex()}, which reads a little input and returns the token. When it needs another token, it calls \texttt{yylex()} again. The scanner acts as a \hs{coroutine}; that is, each time it returns, it remembers where it was, and on the next call it picks up where it left off.
 \plush{}
 
-The \emph{action code} is what stays in the brackets after the \emph{pattern}. If action code returns, scanning resumes on the next call to \texttt{yylex()}; if it doesn't return, scanning resumes immediately.
+The \hs{action code} is what stays in the brackets after the \hs{pattern}. If action code returns, scanning resumes on the next call to \texttt{yylex()}; if it doesn't return, scanning resumes immediately.
 \plush{}
 
-Lexical errors may be \emph{handled} and the lexer may \emph{recover} from some of them: we don't want the lexer to stop at the first error. See how Flex recovers.
+Lexical errors may be \hs{handled} and the lexer may \hs{recover} from some of them: we don't want the lexer to stop at the first error. See how Flex recovers.
 \plush{}
 
 This is Bison code in \texttt{foo.y}:

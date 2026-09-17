@@ -40,7 +40,7 @@ int f(int x) \{ \\
 
 \pptSection[Feasibility]{Path Feasibility}
 
-A path is \emph{feasible} if there exists an input $\mathcal{I}$ to the program that covers the path; i.e., when program is executed with $\mathcal{I}$ as input, the path is taken.
+A path is \hs{feasible} if there exists an input $\mathcal{I}$ to the program that covers the path; i.e., when program is executed with $\mathcal{I}$ as input, the path is taken.
 
 \begin{multicols}{2}
 {\begin{verbatim}
@@ -69,7 +69,7 @@ int f(int x) {
 
 \pptSection[Infeasible]{Infeasible Path}
 
-A path is \emph{infeasible} if there exists no input $\mathcal{I}$ that covers the path.
+A path is \hs{infeasible} if there exists no input $\mathcal{I}$ that covers the path.
 
 \begin{multicols}{2}
 {\begin{verbatim}
@@ -123,7 +123,7 @@ int f(int x) {
 
 \pptSection[PC]{Path Conditions}
 
-\emph{Path condition} is a condition on the input symbols such that if a path is feasible its path-condition is satisfiable.
+\hs{Path condition} is a condition on the input symbols such that if a path is feasible its path-condition is satisfiable.
 
 \begin{pptWide}{2}
 {\begin{verbatim}
@@ -152,9 +152,9 @@ int f(int x) {
 
 \pptSection[Solver]{Constraint Solver}
 
-A \emph{constraint solver} is a tool that finds satisfying assignments for a \emph{constraint}, if it is satisfiable.
+A \hs{constraint solver} is a tool that finds satisfying assignments for a \hs{constraint}, if it is satisfiable.
 
-A \emph{solution} of the constraint is a set of assignments, one for each free variable that makes the constraint satisfiable.
+A \hs{solution} of the constraint is a set of assignments, one for each free variable that makes the constraint satisfiable.
 
 Constraint:
 \begin{gather*}
@@ -173,7 +173,7 @@ X = 2
 
 \pptSection[SAT]{SAT Solvers}
 
-\emph{SAT solver} is a computer program which aims to solve the \emph{Boolean satisfiability problem}: whether the variables of a given Boolean formula can be consistently replaced by the values TRUE or FALSE in such a way that the formula evaluates to TRUE.
+\hs{SAT solver} is a computer program which aims to solve the \hs{Boolean satisfiability problem}: whether the variables of a given Boolean formula can be consistently replaced by the values TRUE or FALSE in such a way that the formula evaluates to TRUE.
 
 Examples:
 
@@ -192,7 +192,7 @@ All expressions are in Boolean logic.
 
 \pptSection[SMT]{SMT Solvers}
 
-\emph{SMT solver} is a computer program which aims to solve the \emph{satisfiability modulo theories}: determine whether a mathematical formula is satisfiable.
+\hs{SMT solver} is a computer program which aims to solve the \hs{satisfiability modulo theories}: determine whether a mathematical formula is satisfiable.
 
 Examples:
 
@@ -211,7 +211,7 @@ SMT solvers: Z3, cvc5, Yices, and many more...
 
 \pptSection[Unsolvable]{Unsolvable Constraints}
 
-Symbolic execution cannot handle \emph{unsolvable} or almost unsolvable constraints.
+Symbolic execution cannot handle \hs{unsolvable} or almost unsolvable constraints.
 
 \begin{multicols}{2}
 {\small\begin{verbatim}
@@ -238,7 +238,7 @@ H \mapsto \texttt{sha256}(P) \\
 
 \pptSection[Explosion]{Path Explosion}
 
-\emph{Path explosion} refers to the fact that the number of control-flow paths in a program grows exponentially with an increase in program size and can even be infinite in the case of programs with unbounded loop iterations.
+\hs{Path explosion} refers to the fact that the number of control-flow paths in a program grows exponentially with an increase in program size and can even be infinite in the case of programs with unbounded loop iterations.
 
 \begin{pptWide}{2}
 {\small\begin{verbatim}

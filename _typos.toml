@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026 Yegor Bugayenko
+# SPDX-License-Identifier: MIT
+
+[default.extend-words]
+ine = "ine"
+linz = "linz"
+nvironment = "nvironment"
+ommand = "ommand"
+wirth = "wirth"

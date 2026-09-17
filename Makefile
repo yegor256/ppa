@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2026 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
+.PHONY: all clean test
 GITHUB=yegor256/ppa
 PLAYLIST=PLaIsQH4uc08wdXIC4utfgMxV_iswE9_Md
 

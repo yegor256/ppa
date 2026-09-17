@@ -7,7 +7,7 @@ students of Innopolis University, in 2023.
 
 All recorded videos are in [this YouTube playlist][playlist].
 
-All compiled slide decks in PDF are [here](https://yegor256.github.io/ppa/).
+All compiled slide decks [in PDF](https://yegor256.github.io/ppa/).
 
 To compile everything just run:
 
